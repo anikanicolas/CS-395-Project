@@ -2,4 +2,4 @@
 
 Anika Nicolas & Rosemary Koshy
 
-C++ 17
+C++17
