@@ -7,6 +7,7 @@
 #include <cmath>
 #include <map>
 #include <string>
+#include <tuple>
 
 std::string xfind(const std::map<std::string, std::string> &map,
                   const std::string &key) {
@@ -14,19 +15,9 @@ std::string xfind(const std::map<std::string, std::string> &map,
     if (it == map.end()) return "FAILURE";
     return it->second;
 }
-//convert binary string to a decimal number
-size_t to_decimal(const std::string &binary_string) {
-    unsigned long num = stoul(binary_string, nullptr, 2);
-    int decimal = 0;
-    int count = 0;
-    int remainder = 0;
-    while(num != 0) {
-      remainder = num % 10;
-      num /= 10;
-      decimal += remainder * pow(2, count);
-      ++count;
-    }
-    return decimal;
+//convert binary string to binary integer
+size_t to_int(const std::string &binary_string) {
+    return stoul(binary_string, nullptr, 2);
 }
 
 // set inst map getters
@@ -70,6 +61,7 @@ std::map<std::string, std::string> get_jump_map() {
 }
 
 // decode stage
+//std::tuple<std::string, std::string, std::string> decode....{}
 std::string decode(std::string inst, const std::map<std::string, std::string> &op_map,
                    const std::map<std::string, std::string> &func_map,
                    const std::map<std::string, std::string> &comp_map,
@@ -80,14 +72,22 @@ std::string decode(std::string inst, const std::map<std::string, std::string> &o
         if (func == "addq") {
             // check if bit 12 is 0, then it's an RR type inst
             if (inst[19] == 0) {
-                size_t ra = to_decimal(inst.substr(6, 11));
-                size_t rb = to_decimal(inst.substr(11, 16));
+                size_t ra = inst.substr(6, 11);
+                size_t rb = inst.substr(11, 16);
+                //access ra address in register array and get data
+                //access rb address in register array and get data
+                //return ra data, rb data, and operation
+                //return std::make_tuple(ra, rb, operation)
+                //return a tuple with these three data points
+                //execute takes in the tuple and then execute parses the tuple
                 return op + ' ' + func + ' ' + std::to_string(ra) + ' ' +
                        std::to_string(rb);
             }
+            // if the bit 12 is 1, then it's an RI type inst
             else if (inst[19] == 1) {
-              // if the bit 12 is 1, then it's an RI type inst
-              
+              size_t ra = inst.substr(6, 11);
+              size_t ib = to_int(inst.substr(11, 19);
+
             }
         }
         else if (func == "subq") {
