@@ -14,10 +14,11 @@
 #include <string>
 #include <vector>
 #include <iomanip>
+#include "processor.cpp"
 
 void read();
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     // declare variables
     std::ifstream file;
     std::string line;
