@@ -8,34 +8,53 @@
  * fetch, decode, execute, memory, write-back
  * TODO: ALU, decode, ...
  */
+#include <cstdint>
 #include <cstdlib>
+#include <cstring>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
 #include <string>
 #include <vector>
 
-#include "processor.cpp"
+//#include "processor.cpp"
 
-void read();
+/**
+ * Print error message and terminate program execution with failure status
+ * @param message First part of error message to print
+ */
+void fail(const std::string &message) {
+    perror(message.c_str());
+    exit(EXIT_FAILURE);
+}
 
-int main(int argc, char *argv[]) {
-    // declare variables
+std::vector<std::string> read(const std::string &filename) {
     std::ifstream file;
     std::string line;
     std::vector<std::string> instructions;
-    std::vector<std::string> pipeline;
-    size_t counter = 0;
+    file.open(filename);
 
-    file.open("input.txt");
-    if (!file) {
-        perror("Cannot open file");
-        return EXIT_FAILURE;
-    }
-    for (size_t i = 0; file; ++i) {
+    if (!file) fail("File " + filename + " not opened");
+    while (file) {
         file >> line;
         instructions.push_back(line);
     }
+
+    file.close();
+    return instructions;
+}
+
+int main(int argc, char *argv[]) {
+    // declare variables
+    std::vector<std::string> pipeline;
+    size_t counter = 0;
+    auto *registers = new int64_t[32];
+
+    if (argc != 2) {
+        std::cerr << "Usage: " << basename(argv[0]) << " [filename]\n";
+        return EXIT_FAILURE;
+    }
+    std::vector<std::string> instructions = read(argv[1]);
 
     std::cout << std::setw(8) << "Clock";
     std::cout << '|';
@@ -66,6 +85,6 @@ int main(int argc, char *argv[]) {
         ++counter;
     }
 
-    file.close();
+    delete[] registers;
     return EXIT_SUCCESS;
 }
