@@ -54,6 +54,11 @@ int main(int argc, char *argv[]) {
     auto *pipeline = new std::string[5];
     size_t counter = 0;
     auto *registers = new int64_t[32];
+    std::map<std::string, std::string> op_map = get_op_map();
+    std::map<std::string, std::string> func_map = get_func_map();
+    std::map<std::string, std::string> comp_map = get_comp_map();
+    std::map<std::string, std::string> jump_map = get_jump_map();
+
     std::vector<std::string> instructions = read(argv[1]);
 
     std::cout << std::setw(8) << "Clock";
@@ -75,7 +80,7 @@ int main(int argc, char *argv[]) {
         pipeline[0] = instructions[counter];
         std::cout << std::setw(32) << pipeline[0];
         std::cout << '|';
-        pipeline[1] = decode(pipeline[0]);
+        pipeline[1] = decode(pipeline[0], op_map, func_map, comp_map, jump_map);
         std::cout << std::setw(32) << pipeline[1];
         std::cout << '|';
         std::cout << std::setw(32) << "Execute";
