@@ -8,12 +8,13 @@
  * fetch, decode, execute, memory, write-back
  * TODO: ALU, decode, ...
  */
-#include <iostream>
 #include <cstdlib>
 #include <fstream>
+#include <iomanip>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iomanip>
+
 #include "processor.cpp"
 
 void read();
