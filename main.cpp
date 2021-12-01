@@ -46,7 +46,7 @@ std::vector<std::string> read(const std::string &filename) {
 
 int main(int argc, char *argv[]) {
     // declare variables
-    std::vector<std::string> pipeline;
+    auto *pipeline = new std::string[5];
     size_t counter = 0;
     auto *registers = new int64_t[32];
 
