@@ -17,7 +17,7 @@
 #include <string>
 #include <vector>
 
-//#include "processor.cpp"
+#include "processor.cpp"
 
 /**
  * Print error message and terminate program execution with failure status
@@ -45,15 +45,15 @@ std::vector<std::string> read(const std::string &filename) {
 }
 
 int main(int argc, char *argv[]) {
-    // declare variables
-    auto *pipeline = new std::string[5];
-    size_t counter = 0;
-    auto *registers = new int64_t[32];
-
     if (argc != 2) {
         std::cerr << "Usage: " << basename(argv[0]) << " [filename]\n";
         return EXIT_FAILURE;
     }
+
+    // declare variables
+    auto *pipeline = new std::string[5];
+    size_t counter = 0;
+    auto *registers = new int64_t[32];
     std::vector<std::string> instructions = read(argv[1]);
 
     std::cout << std::setw(8) << "Clock";
@@ -72,9 +72,11 @@ int main(int argc, char *argv[]) {
     for (size_t clock = 0; clock < instructions.size(); ++clock) {
         std::cout << std::setw(8) << clock;
         std::cout << '|';
-        std::cout << std::setw(32) << instructions[counter];
+        pipeline[0] = instructions[counter];
+        std::cout << std::setw(32) << pipeline[0];
         std::cout << '|';
-        std::cout << std::setw(32) << "Decode";
+        pipeline[1] = decode(pipeline[0]);
+        std::cout << std::setw(32) << pipeline[1];
         std::cout << '|';
         std::cout << std::setw(32) << "Execute";
         std::cout << '|';
@@ -86,5 +88,6 @@ int main(int argc, char *argv[]) {
     }
 
     delete[] registers;
+    delete[] pipeline;
     return EXIT_SUCCESS;
 }
