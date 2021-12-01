@@ -47,7 +47,7 @@ std::vector<std::string> read(const std::string &filename) {
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        std::cerr << "Usage: " << basename(argv[0]) << " [filename]\n";
+        std::cerr << "Usage: " << argv[0] << " [filename]\n";
         return EXIT_FAILURE;
     }
 
