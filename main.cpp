@@ -39,6 +39,8 @@ int main(int argc, char* argv[]) {
     std::cout << '|';
     std::cout << std::setw(32) << "Fetch";
     std::cout << '|';
+    std::cout << std::setw(32) << "Decode";
+    std::cout << '|';
     std::cout << std::setw(32) << "Execute";
     std::cout << '|';
     std::cout << std::setw(32) << "Memory";
@@ -50,6 +52,8 @@ int main(int argc, char* argv[]) {
         std::cout << std::setw(8) << clock;
         std::cout << '|';
         std::cout << std::setw(32) << instructions[counter];
+        std::cout << '|';
+        std::cout << std::setw(32) << "Decode";
         std::cout << '|';
         std::cout << std::setw(32) << "Execute";
         std::cout << '|';
