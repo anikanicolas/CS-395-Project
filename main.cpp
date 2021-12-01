@@ -24,7 +24,7 @@
  * Print error message and terminate program execution with failure status
  * @param message First part of error message to print
  */
-void fail(const std::string &message) {
+[[ noreturn ]] void fail (const std::string &message) {
     perror(message.c_str());
     exit(EXIT_FAILURE);
 }
