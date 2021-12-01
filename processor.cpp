@@ -1,5 +1,9 @@
 #include <iostream>
 #include <map>
+#include <cmath>
+#include <string>
+
+//set instruction
 
 std::map<std::string, std::string> opCodes;
 opCodes["010000"] = "operation";
@@ -25,35 +29,44 @@ hintCodes["00"] = "jmp";
 hintCodes["01"] = "jsr";
 hintCodes["10"] = "ret";
 
-std::string instructionMemory(std::string instruction) {
+
+//decode stage
+std::string decode(std::string instruction) {
   std::string opcode;
-  for (int i = 0; i <  6; i++) {
-    opcode += instruction[i];
-  }
-  if (Opcodes.find(opcode)->second == "operation") {
+  opcode = instruction.substr(0,5);
+  if (opCodes.find(opcode)->second == "operation") {
     std::string functfield;
-    for (int i = 20; i < 27; i++) {
-      functfield += instruction[i];
-    }
+    functfield = instruction.substr(20, 27);
     if (funcCodesOperation.find(functfield)->second == "addq") {
       //check bit 12
       if (instruction[19] == 0) { // if bit 12 is 0, then it's an RR type instruction
-        std::string ra;
-        for (int i = 6; i < 11; i++) {
-          ra += instruction[i];
-        }
-        std::string rb;
-        for (int i = 11; i < 16; i++) {
-          rb += instruction[i];
-        }
-        std::string rc = ALU(ra, rb, "addq");
+        std::string ra = instruction.substr(6, 11);
+        std::string rb = instruction.substr(11, 16);
       }
     }
   }
 }
-
-std::string ALU(std::string r1, std::string r2, std::string operation) {
+//execute stage
+std::string execute(std::string r1, std::string r2, std::string operation) {
   if (operation == "addq") {
-    
+
   }
+}
+//memory stage
+//store instruction:
+  //take in what execute returns
+//vector be main memory
+//write-back stage
+//return a register with the memory data
+int binaryToDecimal(long long int binaryNum) {
+  int decimal = 0;
+  int count = 0;
+  int remainder = 0;
+  while(binaryNum != 0) {
+    remainder = n % 10;
+    binaryNum /= 10;
+    decimal += remainder * pow(2, count);
+    ++count;
+  }
+  return decimal;
 }
