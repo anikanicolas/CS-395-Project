@@ -18,6 +18,7 @@
 #include <vector>
 
 #include "processor.cpp"
+#include "inst_maps.cpp"
 
 /**
  * Print error message and terminate program execution with failure status
