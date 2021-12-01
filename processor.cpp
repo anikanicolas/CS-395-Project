@@ -5,6 +5,7 @@
  * --Rosemary
  */
 #include <cmath>
+#include <iostream>
 #include <map>
 #include <string>
 #include <tuple>
@@ -15,8 +16,9 @@ std::string xfind(const std::map<std::string, std::string> &map,
     if (it == map.end()) return "FAILURE";
     return it->second;
 }
-//convert binary string to binary integer
-size_t to_int(const std::string &binary_string) {
+
+// convert binary string to binary integer
+size_t to_size(const std::string &binary_string) {
     return stoul(binary_string, nullptr, 2);
 }
 
@@ -61,8 +63,9 @@ std::map<std::string, std::string> get_jump_map() {
 }
 
 // decode stage
-//std::tuple<std::string, std::string, std::string> decode....{}
-std::string decode(std::string inst, const std::map<std::string, std::string> &op_map,
+// std::tuple<std::string, std::string, std::string> decode....{}
+std::string decode(std::string inst,
+                   const std::map<std::string, std::string> &op_map,
                    const std::map<std::string, std::string> &func_map,
                    const std::map<std::string, std::string> &comp_map,
                    const std::map<std::string, std::string> &jump_map) {
@@ -70,30 +73,27 @@ std::string decode(std::string inst, const std::map<std::string, std::string> &o
     if (op == "operation") {
         std::string func = xfind(func_map, inst.substr(20, 27));
         if (func == "addq") {
-            // check if bit 12 is 0, then it's an RR type inst
-            if (inst[19] == 0) {
-                size_t ra = inst.substr(6, 11);
-                size_t rb = inst.substr(11, 16);
-                //access ra address in register array and get data
-                //access rb address in register array and get data
-                //return ra data, rb data, and operation
-                //return std::make_tuple(ra, rb, operation)
-                //return a tuple with these three data points
-                //execute takes in the tuple and then execute parses the tuple
+            // check if bit 19 is 1, then it's an RI type inst
+            if (inst[19]) {
+                size_t ra = to_size(inst.substr(6, 11));
+                std::cerr << "ra: " << ra << '\n';
+                size_t ib = to_size(inst.substr(11, 19));
+                std::cerr << "ib: " << ib << '\n';
+            } else {  // if the bit 19 is 0, then it's an RR type inst
+                size_t ra = to_size(inst.substr(6, 11));
+                size_t rb = to_size(inst.substr(11, 16));
+                // access ra address in register array and get data
+                // access rb address in register array and get data
+                // return ra data, rb data, and operation
+                // return std::make_tuple(ra, rb, operation)
+                // return a tuple with these three data points
+                // execute takes in the tuple and then execute parses the tuple
                 return op + ' ' + func + ' ' + std::to_string(ra) + ' ' +
                        std::to_string(rb);
             }
-            // if the bit 12 is 1, then it's an RI type inst
-            else if (inst[19] == 1) {
-              size_t ra = inst.substr(6, 11);
-              size_t ib = to_int(inst.substr(11, 19);
-
+        } else if (func == "subq") {
+            if (inst[19] == 0) {
             }
-        }
-        else if (func == "subq") {
-          if (inst[19] == 0) {
-
-          }
         }
         return op + ' ' + func;
     }
