@@ -15,7 +15,7 @@
 #include <vector>
 #include <iomanip>
 
-void read()
+void read();
 
 int main(int argc, char* argv[]) {
     // declare variables
