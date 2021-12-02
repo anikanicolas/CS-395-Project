@@ -5,11 +5,12 @@
  * C++17
  * A self-contained RISC-V assembler and simulator that reads and executes
  * RV32I Base Integer Instruction Set assembly programs.
- *  1. Instruction fetch
- *  2. Instruction decode and register fetch
- *  3. Execute
- *  4. Memory access
- *  5. Register write back
+ *  1. Instruction fetch: fetch instructions from memory
+ *  2. Instruction decode and register fetch: read registers and decode the
+ * instruction
+ *  3. Execute: execute the instruction or calculate an address
+ *  4. Memory access: access an operand in data memory
+ *  5. Register write back: write the result into a register
  * TODO: ALU, decode, ...
  */
 #include <cstdint>
@@ -21,14 +22,17 @@
 #include <string>
 #include <vector>
 
+#include "decode.cpp"
+#include "execute.cpp"
 #include "inst_maps.cpp"
-#include "processor.cpp"
+#include "memory.cpp"
+#include "writeback.cpp"
 
 /**
  * Print error message and terminate program execution with failure status
  * @param message First part of error message to print
  */
-[[ noreturn ]] void fail (const std::string &message) {
+[[noreturn]] void fail(const std::string &message) {
     perror(message.c_str());
     exit(EXIT_FAILURE);
 }

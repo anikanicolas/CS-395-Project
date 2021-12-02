@@ -1,8 +1,6 @@
 /**
- * Hello Anika,
- * I edited this file, including renaming variables.
- * Feel free to revert any changes or reformat the code to your liking.
- * --Rosemary
+ * Instruction decode and register fetch
+ * Read registers and decode the instruction
  */
 #include <cmath>
 #include <iostream>
@@ -59,21 +57,3 @@ std::string decode(std::string inst,
     }
     return op;
 }
-
-// execute stage
-std::string execute(const std::string &r1, const std::string &r2,
-                    const std::string &op) {
-    if (op == "addq") {
-        return r1 + " + " + r2;
-    } else if (op == "subq") {
-        return "difference";
-    }
-    return "None";
-}
-
-// memory stage
-// store instruction:
-// take in what execute returns
-// vector be main memory
-// write-back stage
-// return a register with the memory data

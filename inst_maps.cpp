@@ -2,6 +2,7 @@
  * Define instruction mapping getter functions
  */
 #include <map>
+#include <string>
 
 std::map<std::string, std::string> get_op_map() {
     std::map<std::string, std::string> op_map;
