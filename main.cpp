@@ -5,7 +5,11 @@
  * C++17
  * A self-contained RISC-V assembler and simulator that reads and executes
  * RV32I Base Integer Instruction Set assembly programs.
- * fetch, decode, execute, memory, write-back
+ *  1. Instruction fetch
+ *  2. Instruction decode and register fetch
+ *  3. Execute
+ *  4. Memory access
+ *  5. Register write back
  * TODO: ALU, decode, ...
  */
 #include <cstdint>
