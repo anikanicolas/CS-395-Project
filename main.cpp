@@ -44,10 +44,7 @@ std::vector<std::string> read(const std::string &filename) {
     file.open(filename);
 
     if (!file) fail("File " + filename + " not opened");
-    while (file >> line) {
-        instructions.push_back(line);
-        std::cerr << line << '\n';
-    }
+    while (file >> line) instructions.push_back(line);
 
     file.close();
     return instructions;
