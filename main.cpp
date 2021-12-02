@@ -37,6 +37,11 @@
     exit(EXIT_FAILURE);
 }
 
+/**
+ * Read instructions from file and return as vector
+ * @param filename name of file to read instructions from
+ * @return
+ */
 std::vector<std::string> read(const std::string &filename) {
     std::ifstream file;
     std::string line;
@@ -50,6 +55,29 @@ std::vector<std::string> read(const std::string &filename) {
     return instructions;
 }
 
+/**
+ * Row out for program excepting clock
+ * @param pipeline basic five-stage risc pipeline to print
+ */
+void print_pipeline(std::string *pipeline) {
+    std::cout << std::setw(32) << pipeline[0];
+    std::cout << '|';
+    std::cout << std::setw(32) << pipeline[1];
+    std::cout << '|';
+    std::cout << std::setw(32) << pipeline[2];
+    std::cout << '|';
+    std::cout << std::setw(32) << pipeline[3];
+    std::cout << '|';
+    std::cout << std::setw(32) << pipeline[4];
+    std::cout << std::endl;
+}
+
+/**
+ * Read program argument and call helper functions
+ * @param argc argument count including program name
+ * @param argv array of C-string arguments
+ * @return exit status
+ */
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " [filename]\n";
@@ -57,7 +85,8 @@ int main(int argc, char *argv[]) {
     }
 
     // declare variables
-    auto *pipeline = new std::string[5];
+    std::string pipeline[5] = {"Fetch", "Decode", "Execute", "Memory",
+                               "Writeback"};
     size_t counter = 0;
     auto *registers = new int64_t[32];
     std::map<std::string, std::string> op_map = get_op_map();
@@ -67,38 +96,24 @@ int main(int argc, char *argv[]) {
 
     std::vector<std::string> instructions = read(argv[1]);
 
-    std::cout << std::setw(8) << "Clock";
-    std::cout << '|';
-    std::cout << std::setw(32) << "Fetch";
-    std::cout << '|';
-    std::cout << std::setw(32) << "Decode";
-    std::cout << '|';
-    std::cout << std::setw(32) << "Execute";
-    std::cout << '|';
-    std::cout << std::setw(32) << "Memory";
-    std::cout << '|';
-    std::cout << std::setw(32) << "Write-back";
-    std::cout << '\n';
+    std::cout << "Clock|";
+    print_pipeline(pipeline);
 
+    /*
+     * I believe we can implement stalling by doing the pipeline in reverse
+     * order. We do the last thing in the pipeline first, then each thing before
+     * that. We don't want to move fetch into decode because if it turns out
+     * decode can't be moved to execute yet, then we'd have to revert it. The
+     * first in line should move forward before those waiting behind do.
+     */
     for (size_t clock = 0; clock < instructions.size(); ++clock) {
-        std::cout << std::setw(8) << clock;
-        std::cout << '|';
         pipeline[0] = instructions[counter];
-        std::cout << std::setw(32) << pipeline[0];
-        std::cout << '|';
         pipeline[1] = decode(pipeline[0], op_map, func_map, comp_map, jump_map);
-        std::cout << std::setw(32) << pipeline[1];
-        std::cout << '|';
-        std::cout << std::setw(32) << "Execute";
-        std::cout << '|';
-        std::cout << std::setw(32) << "Memory";
-        std::cout << '|';
-        std::cout << std::setw(32) << "Write-back";
-        std::cout << '\n';
+        std::cout << std::setw(5) << clock << '|';
+        print_pipeline(pipeline);
         ++counter;
     }
 
     delete[] registers;
-    delete[] pipeline;
     return EXIT_SUCCESS;
 }
