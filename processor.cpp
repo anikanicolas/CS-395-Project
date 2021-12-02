@@ -22,7 +22,7 @@ size_t to_size(const std::string &binary_string) {
     return stoul(binary_string, nullptr, 2);
 }
 
-// decode stage
+// instruction decode and register fetch stage
 // std::tuple<std::string, std::string, std::string> decode....{}
 std::string decode(std::string inst,
                    const std::map<std::string, std::string> &op_map,
