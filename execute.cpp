@@ -3,7 +3,7 @@
  */
 #include <string>
 
-// execute stage
+// execute stage [[ unused ]]
 std::string execute(const std::string &r1, const std::string &r2,
                     const std::string &op) {
     if (op == "addq") {

@@ -6,7 +6,7 @@
 #include <iostream>
 #include <map>
 #include <string>
-#include <tuple>
+#include <tuple>  // unused
 
 std::string xfind(const std::map<std::string, std::string> &map,
                   const std::string &key) {
@@ -22,6 +22,7 @@ size_t to_size(const std::string &binary_string) {
 
 // instruction decode and register fetch stage
 // std::tuple<std::string, std::string, std::string> decode....{}
+// warning: unused parameters 'comp_map' and 'jump_map'
 std::string decode(std::string inst,
                    const std::map<std::string, std::string> &op_map,
                    const std::map<std::string, std::string> &func_map,

@@ -1,5 +1,6 @@
 /**
  * Define instruction mapping getter functions
+ * Based on DEC Alpha instruction subset
  */
 #include <map>
 #include <string>

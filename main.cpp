@@ -3,15 +3,15 @@
  * Anika Nicolas & Rosemary Koshy
  * Due: Friday, November 12 at 1:30 PM
  * C++17
- * A self-contained RISC-V assembler and simulator that reads and executes
- * RV32I Base Integer Instruction Set assembly programs.
- *  1. Instruction fetch: fetch instructions from memory
- *  2. Instruction decode and register fetch: read registers and decode the
+ * A DEC Alpha processor simulator that reads and executes binary programs.
+ * 1. Instruction fetch: fetch instructions from memory
+ * 2. Instruction decode and register fetch: read registers and decode the
  * instruction
- *  3. Execute: execute the instruction or calculate an address
- *  4. Memory access: access an operand in data memory
- *  5. Register write back: write the result into a register
+ * 3. Execute: execute the instruction or calculate an address
+ * 4. Memory access: access an operand in data memory
+ * 5. Register write back: write the result into a register
  * TODO: ALU, decode, ...
+ * TODO(anikanicolas): add more instructions to input.txt or add input1.txt
  */
 #include <cstdint>
 #include <cstdlib>
@@ -24,7 +24,7 @@
 
 #include "decode.cpp"
 #include "execute.cpp"
-#include "inst_maps.cpp"
+#include "instructions.cpp"
 #include "memory.cpp"
 #include "writeback.cpp"
 
