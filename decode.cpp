@@ -2,60 +2,161 @@
  * Instruction decode and register fetch
  * Read registers and decode the instruction
  */
-#include <cmath>
-#include <iostream>
-#include <map>
 #include <string>
-#include <tuple>  // unused
-
-std::string xfind(const std::map<std::string, std::string> &map,
-                  const std::string &key) {
-    auto it = map.find(key);
-    if (it == map.end()) return "FAILURE";
-    return it->second;
-}
 
 // convert binary string to binary integer
-size_t to_size(const std::string &binary_string) {
-    return stoul(binary_string, nullptr, 2);
+std::string to_decimal(const std::string &binary) {
+    return std::to_string(stoul(binary, nullptr, 2));
 }
 
-// instruction decode and register fetch stage
-// std::tuple<std::string, std::string, std::string> decode....{}
-// warning: unused parameters 'comp_map' and 'jump_map'
-// what are they supposed to be used for?
-std::string decode(std::string inst,
-                   const std::map<std::string, std::string> &op_map,
-                   const std::map<std::string, std::string> &func_map,
-                   const std::map<std::string, std::string> &comp_map,
-                   const std::map<std::string, std::string> &jump_map) {
-    std::string op = xfind(op_map, inst.substr(0, 6));
-    if (op == "operation") {
-        std::string func = xfind(func_map, inst.substr(20, 27));
-        if (func == "addq") {
-            // check if bit 19 is 1, then it's an RI type inst
-            if (inst[19]) {
-                size_t ra = to_size(inst.substr(6, 11));
-                std::cerr << "ra: " << ra << '\n';
-                size_t ib = to_size(inst.substr(11, 19));
-                std::cerr << "ib: " << ib << '\n';
-            } else {  // if the bit 19 is 0, then it's an RR type inst
-                size_t ra = to_size(inst.substr(6, 11));
-                size_t rb = to_size(inst.substr(11, 16));
-                // access ra address in register array and get data
-                // access rb address in register array and get data
-                // return ra data, rb data, and operation
-                // return std::make_tuple(ra, rb, operation)
-                // return a tuple with these three data points
-                // execute takes in the tuple and then execute parses the tuple
-                return op + ' ' + func + ' ' + std::to_string(ra) + ' ' +
-                       std::to_string(rb);
+std::string instruction_decode(const std::string &instruction) {
+    std::string opcode = instruction.substr(0, 7);
+    std::string rd = instruction.substr(7, 12);
+    std::string rd_decimal = to_decimal(rd);
+    std::string funct3 = instruction.substr(12, 15);
+    std::string rs1 = instruction.substr(15, 20);
+    std::string rs1_decimal = to_decimal(rs1);
+    std::string rs2 = instruction.substr(20, 25);
+    std::string rs2_decimal = to_decimal(rs2);
+    std::string funct7 = instruction.substr(25, 32);
+    std::string funct7_decimal = to_decimal(funct7);
+    std::string imm11_0 = instruction.substr(20, 32);
+    std::string imm31_12 = instruction.substr(12, 32);
+
+    if (opcode == "0110111") {
+        return "LUI  " + rd_decimal + " " + imm31_12;
+    } else if (opcode == "0010111") {
+        return "AUIPC " + rd_decimal + " " + imm31_12;
+    } else if (opcode == "1101111") {
+        return "JAL " + rd_decimal + " " + imm31_12;
+    } else if (opcode == "1100111") {
+        if (funct3 == "000") {
+            return "JALR " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        }
+    } else if (opcode == "1100011") {
+        if (funct3 == "000") {
+            return "BEQ " + rd + " " + rs1_decimal + " " + rs2_decimal + " " + funct7;
+        } else if (funct3 == "001") {
+            return "BNE " + rd + " " + rs1_decimal + " " + rs2_decimal + " " + funct7;
+        } else if (funct3 == "100") {
+            return "BLT " + rd + " " + rs1_decimal + " " + rs2_decimal + " " + funct7;
+        } else if (funct3 == "101") {
+            return "BGE " + rd + " " + rs1_decimal + " " + rs2_decimal + " " + funct7;
+        } else if (funct3 == "110") {
+            return "BLTU " + rd + " " + rs1_decimal + " " + rs2_decimal + " " + funct7;
+        } else if (funct3 == "111") {
+            return "BGEU " + rd + " " + rs1_decimal + " " + rs2_decimal + " " + funct7;
+        }
+    } else if (opcode == "0000011") {
+        if (funct3 == "000") {
+            return "LB " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "001") {
+            return "LH " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "010") {
+            return "LW " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "100") {
+            return "LBU " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "101") {
+            return "LHU " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        }
+    } else if (opcode == "0100011") {
+        if (funct3 == "000") {
+            return "SB " + rd + " " + rs1_decimal + " " + rs2_decimal + " " + funct7;
+        } else if (funct3 == "001") {
+            return "SH " + rd + " " + rs1_decimal + " " + rs2_decimal + " " + funct7;
+        } else if (funct3 == "010") {
+            return "SW " + rd + " " + rs1_decimal + " " + rs2_decimal + " " + funct7;
+        }
+    } else if (opcode == "0010011") {
+        if (funct3 == "000") {
+            return "ADDI " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "010") {
+            return "SLTI " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "011") {
+            return "SLTIU " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "100") {
+            return "XORI " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "110") {
+            return "ORI " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "111") {
+            return "ANDI " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "001") {
+            if (funct7 == "0000000") {
+                return "SLLI " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
             }
-        } else if (func == "subq") {
-            if (inst[19] == 0) {
+        } else if (funct3 == "101") {
+            if (funct7 == "0000000") {
+                return "SRLI " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
+            } else if (funct7 == "0100000") {
+                return "SRAI " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
             }
         }
-        return op + ' ' + func;
+    } else if (opcode == "0110011") {
+        if (funct3 == "000") {
+            if (funct7 == "0000000") {
+                return "ADD " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
+            } else if (funct7 == "0100000") {
+                return "SUB " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
+            }
+        } else if (funct3 == "001") {
+            if (funct7 == "0000000") {
+                return "SLL " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
+            }
+        } else if (funct3 == "010") {
+            if (funct7 == "0000000") {
+                return "SLT " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
+            }
+        } else if (funct3 == "011") {
+            if (funct7 == "0000000") {
+                return "SLTU " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
+            }
+        } else if (funct3 == "100") {
+            if (funct7 == "0000000") {
+                return "XOR " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
+            }
+        } else if (funct3 == "101") {
+            if (funct7 == "0000000") {
+                return "SRL " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
+            } else if (funct7 == "0100000") {
+                return "SRA " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
+            }
+        } else if (funct3 == "110") {
+            if (funct7 == "0000000") {
+                return "OR " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
+            }
+        } else if (funct3 == "111") {
+            if (funct7 == "0000000") {
+                return "AND " + rd_decimal + " " + rs1_decimal + " " + rs2_decimal;
+            }
+        }
+    } else if (opcode == "0001111") {
+        if (funct3 == "000") {
+            return "FENCE";
+        } else if (funct3 == "001") {
+            return "FENCE.I";
+        }
+    } else if (opcode == "1110011") {
+        if (funct3 == "000") {
+            if (imm11_0 == "000000000000") {
+                return "ECALL";
+            } else if (imm11_0 == "000000000001") {
+                return "EBREAK";
+            }
+        } else if (funct3 == "001") {
+            return "CSRRW " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "010") {
+            return "CSRRS " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "011") {
+            return "CSRRC " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "101") {
+            return "CSRRWI " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "110") {
+            return "CSRRSI " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        } else if (funct3 == "111") {
+            return "CSRRCI " + rd_decimal + " " + rs1_decimal + " " + imm11_0;
+        }
     }
-    return op;
+}
+
+std::string register_fetch(const std::string &instruction) {
 }

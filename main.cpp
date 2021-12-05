@@ -24,7 +24,6 @@
 
 #include "decode.cpp"
 #include "execute.cpp"
-#include "instructions.cpp"
 #include "memory.cpp"
 #include "writeback.cpp"
 
@@ -88,11 +87,7 @@ int main(int argc, char *argv[]) {
     std::string pipeline[5] = {"Fetch", "Decode", "Execute", "Memory",
                                "Writeback"};
     size_t counter = 0;
-    auto *registers = new int64_t[32];
-    std::map<std::string, std::string> op_map = get_op_map();
-    std::map<std::string, std::string> func_map = get_func_map();
-    std::map<std::string, std::string> comp_map = get_comp_map();
-    std::map<std::string, std::string> jump_map = get_jump_map();
+    auto *registers = new int32_t[32];
 
     std::vector<std::string> instructions = read(argv[1]);
 
@@ -108,7 +103,7 @@ int main(int argc, char *argv[]) {
      */
     for (size_t clock = 0; clock < instructions.size(); ++clock) {
         pipeline[0] = instructions[counter];
-        pipeline[1] = decode(pipeline[0], op_map, func_map, comp_map, jump_map);
+        pipeline[1] = instruction_decode(pipeline[0]);
         std::cout << std::setw(5) << clock << '|';
         print_pipeline(pipeline);
         ++counter;
