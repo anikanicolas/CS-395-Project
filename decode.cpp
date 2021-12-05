@@ -23,6 +23,7 @@ size_t to_size(const std::string &binary_string) {
 // instruction decode and register fetch stage
 // std::tuple<std::string, std::string, std::string> decode....{}
 // warning: unused parameters 'comp_map' and 'jump_map'
+// what are they supposed to be used for?
 std::string decode(std::string inst,
                    const std::map<std::string, std::string> &op_map,
                    const std::map<std::string, std::string> &func_map,

@@ -40,7 +40,7 @@
 /**
  * Read instructions from file and return as vector
  * @param filename name of file to read instructions from
- * @return
+ * @return vector of instructions
  */
 std::vector<std::string> read(const std::string &filename) {
     std::ifstream file;
