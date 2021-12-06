@@ -24,7 +24,7 @@ std::string rget(const size_t &addr, const uint32_t regs[]) {
  * @param regs array of 32 unsigned 32-bit integer registers
  * @return new copy of decoded instruction with fetched registers
  */
-std::vector<std::string> rfetch(const std::vector<std::string> &decoded, const uint32_t regs[31]) {
+std::vector<std::string> rfetch(const std::vector<std::string> &decoded, const uint32_t regs[32]) {
     /// return of rfetch is initially decoded input
     std::vector<std::string> ret = decoded;
     if (!decoded.empty()) {
