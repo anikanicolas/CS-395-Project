@@ -75,7 +75,7 @@ void print_pipeline(std::vector<std::string> *pipeline) {
     std::cout << '|';
     std::cout << std::setw(18) << vectostr(pipeline[1]);
     std::cout << '|';
-    std::cout << std::setw(32) << vectostr(pipeline[2]);
+    std::cout << std::setw(14) << vectostr(pipeline[2]);
     std::cout << '|';
     std::cout << std::setw(32) << vectostr(pipeline[3]);
     std::cout << '|';
@@ -102,8 +102,12 @@ int main(int argc, char *argv[]) {
                                             {"Execute"},
                                             {"Memory access"},
                                             {"Register Writeback"}};
-    size_t counter = 0;
-    auto *registers = new int32_t[32];
+    /// program counter holds the address of the current instruction
+    size_t pc = 0;
+    auto *registers = new uint32_t[31];
+    for (size_t i = 0; i < 31; ++i) {
+        registers[i] = 0;
+    }
 
     std::vector<std::string> instructions = read(argv[1]);
 
@@ -118,11 +122,12 @@ int main(int argc, char *argv[]) {
      * first in line should move forward before those waiting behind do.
      */
     for (size_t clock = 0; clock < instructions.size(); ++clock) {
-        pipeline[0] = {instructions[counter]};
+        pipeline[0] = {instructions[pc]};
         pipeline[1] = idecode(pipeline[0][0]);
+        pipeline[2] = rfetch(pipeline[1], registers);
         std::cout << std::setw(5) << clock << '|';
         print_pipeline(pipeline);
-        ++counter;
+        ++pc;
     }
 
     delete[] registers;
