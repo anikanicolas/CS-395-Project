@@ -22,10 +22,11 @@
 #include <string>
 #include <vector>
 
-#include "decode.cpp"
 #include "execute.cpp"
-#include "memory.cpp"
-#include "writeback.cpp"
+#include "idecode.cpp"
+#include "maccess.cpp"
+#include "rfetch.cpp"
+#include "rwriteback.cpp"
 
 /**
  * Print error message and terminate program execution with failure status
@@ -54,20 +55,31 @@ std::vector<std::string> read(const std::string &filename) {
     return instructions;
 }
 
+std::string vectostr(const std::vector<std::string> &vec) {
+    std::string str;
+    if (!vec.empty()) {
+        str.append(vec[0]);
+        for (size_t i = 1; i < vec.size(); ++i) {
+            str.append(' ' + vec[i]);
+        }
+    }
+    return str;
+}
+
 /**
  * Row out for program excepting clock
  * @param pipeline basic five-stage risc pipeline to print
  */
-void print_pipeline(std::string *pipeline) {
-    std::cout << std::setw(32) << pipeline[0];
+void print_pipeline(std::vector<std::string> *pipeline) {
+    std::cout << std::setw(32) << vectostr(pipeline[0]);
     std::cout << '|';
-    std::cout << std::setw(32) << pipeline[1];
+    std::cout << std::setw(18) << vectostr(pipeline[1]);
     std::cout << '|';
-    std::cout << std::setw(32) << pipeline[2];
+    std::cout << std::setw(32) << vectostr(pipeline[2]);
     std::cout << '|';
-    std::cout << std::setw(32) << pipeline[3];
+    std::cout << std::setw(32) << vectostr(pipeline[3]);
     std::cout << '|';
-    std::cout << std::setw(32) << pipeline[4];
+    std::cout << std::setw(32) << vectostr(pipeline[4]);
     std::cout << std::endl;
 }
 
@@ -84,8 +96,12 @@ int main(int argc, char *argv[]) {
     }
 
     // declare variables
-    std::string pipeline[5] = {"Fetch", "Decode", "Execute", "Memory",
-                               "Writeback"};
+    std::vector<std::string> pipeline[6] = {{"Instruction Fetch"},
+                                            {"Instruction Decode"},
+                                            {"Register Fetch"},
+                                            {"Execute"},
+                                            {"Memory access"},
+                                            {"Register Writeback"}};
     size_t counter = 0;
     auto *registers = new int32_t[32];
 
@@ -102,8 +118,8 @@ int main(int argc, char *argv[]) {
      * first in line should move forward before those waiting behind do.
      */
     for (size_t clock = 0; clock < instructions.size(); ++clock) {
-        pipeline[0] = instructions[counter];
-        pipeline[1] = instruction_decode(pipeline[0]);
+        pipeline[0] = {instructions[counter]};
+        pipeline[1] = idecode(pipeline[0][0]);
         std::cout << std::setw(5) << clock << '|';
         print_pipeline(pipeline);
         ++counter;
