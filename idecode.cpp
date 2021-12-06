@@ -1,30 +1,45 @@
 /**
- * Instruction decode
- * https://github.com/riscv/riscv-isa-manual/releases/download/Ratified-IMAFDQC/riscv-spec-20191213.pdf
+ * Instruction decode: decode the instruction
  */
 #include <algorithm>
 #include <string>
 #include <vector>
 
-// convert binary string to binary integer
+/**
+ * Convert binary string to decimal string
+ * @param binary string to convert
+ * @return decimal string
+ */
 std::string to_decimal(const std::string &binary) {
     return std::to_string(stoul(binary, nullptr, 2));
 }
 
-std::string xsubstr(const std::string &instruction, const size_t &start,
+/**
+ * Get substring of instruction (first bit of instruction is 31, last bit is 0)
+ * @param instruction to get substring of
+ * @param start first bit to read
+ * @param end last bit to read
+ * @return substring of instruction from start to end (inclusive)
+ */
+std::string isubstr(const std::string &instruction, const size_t &start,
                     const size_t &end) {
     return instruction.substr(32 - end, end - start);
 }
 
+/**
+ * Decode instruction
+ * @param instruction to decode
+ * @return vector of words representing decoded instruction
+ */
 std::vector<std::string> idecode(const std::string &instruction) {
-    std::string opcode = xsubstr(instruction, 0, 7);
-    std::string rd = xsubstr(instruction, 7, 12);
-    std::string funct3 = xsubstr(instruction, 12, 15);
-    std::string rs1 = xsubstr(instruction, 15, 20);
-    std::string rs2 = xsubstr(instruction, 20, 25);
-    std::string funct7 = xsubstr(instruction, 25, 32);
-    std::string imm11_0 = xsubstr(instruction, 20, 32);
-    std::string imm31_12 = xsubstr(instruction, 12, 32);
+    std::string opcode = isubstr(instruction, 0, 7);
+    std::string rd = isubstr(instruction, 7, 12);
+    std::string funct3 = isubstr(instruction, 12, 15);
+    std::string rs1 = isubstr(instruction, 15, 20);
+    std::string rs2 = isubstr(instruction, 20, 25);
+    std::string funct7 = isubstr(instruction, 25, 32);
+    std::string imm11_0 = isubstr(instruction, 20, 32);
+    std::string imm31_12 = isubstr(instruction, 12, 32);
     std::string rd_decimal = to_decimal(rd);
     std::string rs1_decimal = to_decimal(rs1);
     std::string rs2_decimal = to_decimal(rs2);

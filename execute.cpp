@@ -1,6 +1,5 @@
 /**
  * Execute: execute the instruction or calculate an address
- * https://github.com/riscv/riscv-isa-manual/releases/download/Ratified-IMAFDQC/riscv-spec-20191213.pdf
  */
 #include <string>
 

@@ -3,7 +3,10 @@
  * Anika Nicolas & Rosemary Koshy
  * Due: Friday, November 12 at 1:30 PM
  * C++17
- * A DEC Alpha processor simulator that reads and executes binary programs.
+ * A RISC-V processor simulator that reads and executes binary programs.
+ * https://github.com/riscv/riscv-isa-manual/releases/download/Ratified-IMAFDQC/riscv-spec-20191213.pdf
+ * https://en.wikipedia.org/wiki/Instruction_pipelining
+ * https://en.wikipedia.org/wiki/Classic_RISC_pipeline
  * 1. Instruction fetch: fetch instructions from memory
  * 2. Instruction decode and register fetch: read registers and decode the
  * instruction
@@ -43,8 +46,11 @@
  * @return vector of instructions
  */
 std::vector<std::string> read(const std::string &filename) {
+    /// input file stream
     std::ifstream file;
+    /// line gotten from file
     std::string line;
+    /// vector of instructions to return
     std::vector<std::string> instructions;
     file.open(filename);
 
@@ -55,7 +61,13 @@ std::vector<std::string> read(const std::string &filename) {
     return instructions;
 }
 
+/**
+ * Convert vector to string
+ * @param vec vector to convert
+ * @return string of each item in vector separated by space
+ */
 std::string vectostr(const std::vector<std::string> &vec) {
+    /// string to return
     std::string str;
     if (!vec.empty()) {
         str.append(vec[0]);
@@ -67,7 +79,7 @@ std::string vectostr(const std::vector<std::string> &vec) {
 }
 
 /**
- * Row out for program excepting clock
+ * Print pipeline as table
  * @param pipeline basic five-stage risc pipeline to print
  */
 void print_pipeline(std::vector<std::string> *pipeline) {
@@ -85,8 +97,8 @@ void print_pipeline(std::vector<std::string> *pipeline) {
 
 /**
  * Read program argument and call helper functions
- * @param argc argument count including program name
- * @param argv array of C-string arguments
+ * @param argc argument count including program name should be 2
+ * @param argv array of C-string arguments including filename
  * @return exit status
  */
 int main(int argc, char *argv[]) {
@@ -95,7 +107,7 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
 
-    // declare variables
+    /// RISC pipeline (plus register fetch)
     std::vector<std::string> pipeline[6] = {{"Instruction Fetch"},
                                             {"Instruction Decode"},
                                             {"Register Fetch"},
@@ -104,11 +116,11 @@ int main(int argc, char *argv[]) {
                                             {"Register Writeback"}};
     /// program counter holds the address of the current instruction
     size_t pc = 0;
-    auto *registers = new uint32_t[31];
-    for (size_t i = 0; i < 31; ++i) {
-        registers[i] = 0;
-    }
+    /// array of 32 unsigned 32-bit integer registers (0 is unused)
+    auto *registers = new uint32_t[32];
+    for (size_t i = 0; i < 32; registers[i] = ++i);
 
+    /// vector of binary instruction strings read from file
     std::vector<std::string> instructions = read(argv[1]);
 
     std::cout << "Clock|";
