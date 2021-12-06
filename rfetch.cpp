@@ -31,7 +31,7 @@ std::vector<std::string> rfetch(const std::vector<std::string> &decoded, const u
         for (size_t i = 1; i < decoded.size(); ++i) {
             /// word to check if it is a register address to fetch
             std::string word = decoded[i];
-            if (word[0] == 't') {
+            if (word[0] == 's') {
                 ret[i] = rget(stoul(word.substr(1, word.length() - 1)), regs);
             }
         }

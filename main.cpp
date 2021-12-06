@@ -5,6 +5,7 @@
  * C++17
  * A RISC-V processor simulator that reads and executes binary programs.
  * https://github.com/riscv/riscv-isa-manual/releases/download/Ratified-IMAFDQC/riscv-spec-20191213.pdf
+ * https://cs.stanford.edu/people/eroberts/courses/soco/projects/risc/pipelining/index.html
  * https://en.wikipedia.org/wiki/Instruction_pipelining
  * https://en.wikipedia.org/wiki/Classic_RISC_pipeline
  * 1. Instruction fetch: fetch instructions from memory
@@ -25,8 +26,8 @@
 #include <string>
 #include <vector>
 
-#include "execute.cpp"
 #include "idecode.cpp"
+#include "iexecute.cpp"
 #include "maccess.cpp"
 #include "rfetch.cpp"
 #include "rwriteback.cpp"
@@ -89,9 +90,11 @@ void print_pipeline(std::vector<std::string> *pipeline) {
     std::cout << '|';
     std::cout << std::setw(14) << vectostr(pipeline[2]);
     std::cout << '|';
-    std::cout << std::setw(32) << vectostr(pipeline[3]);
+    std::cout << std::setw(14) << vectostr(pipeline[3]);
     std::cout << '|';
-    std::cout << std::setw(32) << vectostr(pipeline[4]);
+    std::cout << std::setw(16) << vectostr(pipeline[4]);
+    std::cout << '|';
+    std::cout << std::setw(16) << vectostr(pipeline[5]);
     std::cout << std::endl;
 }
 
@@ -118,7 +121,9 @@ int main(int argc, char *argv[]) {
     size_t pc = 0;
     /// array of 32 unsigned 32-bit integer registers (0 is unused)
     auto *registers = new uint32_t[32];
-    for (size_t i = 0; i < 32; registers[i] = ++i);
+    for (uint32_t i = 0; i < 32; ++i) {
+        registers[i] = i;
+    }
 
     /// vector of binary instruction strings read from file
     std::vector<std::string> instructions = read(argv[1]);
@@ -137,6 +142,7 @@ int main(int argc, char *argv[]) {
         pipeline[0] = {instructions[pc]};
         pipeline[1] = idecode(pipeline[0][0]);
         pipeline[2] = rfetch(pipeline[1], registers);
+        pipeline[3] = iexecute(pipeline[2]);
         std::cout << std::setw(5) << clock << '|';
         print_pipeline(pipeline);
         ++pc;

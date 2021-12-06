@@ -3,5 +3,5 @@
  */
 // memory stage
 // store instruction:
-// take in what execute returns
+// take in what iexecute returns
 // vector be main memory

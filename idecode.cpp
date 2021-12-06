@@ -48,142 +48,142 @@ std::vector<std::string> idecode(const std::string &instruction) {
     std::string imm31_12_decimal = to_decimal(imm31_12);
 
     if (opcode == "0110111") {
-        return {"LUI", 't' + rd_decimal, imm31_12_decimal};
+        return {"LUI", 'd' + rd_decimal, imm31_12_decimal};
     } else if (opcode == "0010111") {
-        return {"AUIPC", 't' + rd_decimal, imm31_12_decimal};
+        return {"AUIPC", 'd' + rd_decimal, imm31_12_decimal};
     } else if (opcode == "1101111") {
-        return {"JAL", 't' + rd_decimal, imm31_12_decimal};
+        return {"JAL", 'd' + rd_decimal, imm31_12_decimal};
     } else if (opcode == "1100111") {
         if (funct3 == "000") {
-            return {"JALR", 't' + rd_decimal, 't' + rs1_decimal,
+            return {"JALR", 'd' + rd_decimal, 's' + rs1_decimal,
                     imm11_0_decimal};
         }
     } else if (opcode == "1100011") {
         if (funct3 == "000") {
-            return {"BEQ", rd_decimal, 't' + rs1_decimal, 't' + rs2_decimal,
+            return {"BEQ", rd_decimal, 's' + rs1_decimal, 's' + rs2_decimal,
                     funct7_decimal};
         } else if (funct3 == "001") {
-            return {"BNE", rd_decimal, 't' + rs1_decimal, 't' + rs2_decimal,
+            return {"BNE", rd_decimal, 's' + rs1_decimal, 's' + rs2_decimal,
                     funct7_decimal};
         } else if (funct3 == "100") {
-            return {"BLT", rd_decimal, 't' + rs1_decimal, 't' + rs2_decimal,
+            return {"BLT", rd_decimal, 's' + rs1_decimal, 's' + rs2_decimal,
                     funct7_decimal};
         } else if (funct3 == "101") {
-            return {"BGE", rd_decimal, 't' + rs1_decimal, 't' + rs2_decimal,
+            return {"BGE", rd_decimal, 's' + rs1_decimal, 's' + rs2_decimal,
                     funct7_decimal};
         } else if (funct3 == "110") {
-            return {"BLTU", rd_decimal, 't' + rs1_decimal, 't' + rs2_decimal,
+            return {"BLTU", rd_decimal, 's' + rs1_decimal, 's' + rs2_decimal,
                     funct7_decimal};
         } else if (funct3 == "111") {
-            return {"BGEU", rd_decimal, 't' + rs1_decimal, 't' + rs2_decimal,
+            return {"BGEU", rd_decimal, 's' + rs1_decimal, 's' + rs2_decimal,
                     funct7_decimal};
         }
     } else if (opcode == "0000011") {
         if (funct3 == "000") {
-            return {"LB", 't' + rd_decimal, 't' + rs1_decimal, imm11_0_decimal};
+            return {"LB", 'd' + rd_decimal, 's' + rs1_decimal, imm11_0_decimal};
         } else if (funct3 == "001") {
-            return {"LH", 't' + rd_decimal, 't' + rs1_decimal, imm11_0_decimal};
+            return {"LH", 'd' + rd_decimal, 's' + rs1_decimal, imm11_0_decimal};
         } else if (funct3 == "010") {
-            return {"LW", 't' + rd_decimal, 't' + rs1_decimal, imm11_0_decimal};
+            return {"LW", 'd' + rd_decimal, 's' + rs1_decimal, imm11_0_decimal};
         } else if (funct3 == "100") {
-            return {"LBU", 't' + rd_decimal, 't' + rs1_decimal,
+            return {"LBU", 'd' + rd_decimal, 's' + rs1_decimal,
                     imm11_0_decimal};
         } else if (funct3 == "101") {
-            return {"LHU", 't' + rd_decimal, 't' + rs1_decimal,
+            return {"LHU", 'd' + rd_decimal, 's' + rs1_decimal,
                     imm11_0_decimal};
         }
     } else if (opcode == "0100011") {
         if (funct3 == "000") {
-            return {"SB", rd_decimal, 't' + rs1_decimal, 't' + rs2_decimal,
+            return {"SB", rd_decimal, 's' + rs1_decimal, 's' + rs2_decimal,
                     funct7_decimal};
         } else if (funct3 == "001") {
-            return {"SH", rd_decimal, 't' + rs1_decimal, 't' + rs2_decimal,
+            return {"SH", rd_decimal, 's' + rs1_decimal, 's' + rs2_decimal,
                     funct7_decimal};
         } else if (funct3 == "010") {
-            return {"SW", rd_decimal, 't' + rs1_decimal, 't' + rs2_decimal,
+            return {"SW", rd_decimal, 's' + rs1_decimal, 's' + rs2_decimal,
                     funct7_decimal};
         }
     } else if (opcode == "0010011") {
         if (funct3 == "000") {
-            return {"ADDI", 't' + rd_decimal, 't' + rs1_decimal,
+            return {"ADDI", 'd' + rd_decimal, 's' + rs1_decimal,
                     imm11_0_decimal};
         } else if (funct3 == "010") {
-            return {"SLTI", 't' + rd_decimal, 't' + rs1_decimal,
+            return {"SLTI", 'd' + rd_decimal, 's' + rs1_decimal,
                     imm11_0_decimal};
         } else if (funct3 == "011") {
-            return {"SLTIU", 't' + rd_decimal, rs1_decimal, imm11_0_decimal};
+            return {"SLTIU", 'd' + rd_decimal, rs1_decimal, imm11_0_decimal};
         } else if (funct3 == "100") {
-            return {"XORI", 't' + rd_decimal, rs1_decimal, imm11_0_decimal};
+            return {"XORI", 'd' + rd_decimal, rs1_decimal, imm11_0_decimal};
         } else if (funct3 == "110") {
-            return {"ORI", 't' + rd_decimal, 't' + rs1_decimal,
+            return {"ORI", 'd' + rd_decimal, 's' + rs1_decimal,
                     imm11_0_decimal};
         } else if (funct3 == "111") {
-            return {"ANDI", 't' + rd_decimal, 't' + rs1_decimal,
+            return {"ANDI", 'd' + rd_decimal, 's' + rs1_decimal,
                     imm11_0_decimal};
         } else if (funct3 == "001") {
             if (funct7 == "0000000") {
-                return {"SLLI", 't' + rd_decimal, rs1_decimal, rs2_decimal};
+                return {"SLLI", 'd' + rd_decimal, rs1_decimal, rs2_decimal};
             }
         } else if (funct3 == "101") {
             if (funct7 == "0000000") {
-                return {"SRLI", 't' + rd_decimal, 't' + rs1_decimal,
+                return {"SRLI", 'd' + rd_decimal, 's' + rs1_decimal,
                         rs2_decimal};
             } else if (funct7 == "0100000") {
-                return {"SRAI", 't' + rd_decimal, 't' + rs1_decimal,
+                return {"SRAI", 'd' + rd_decimal, 's' + rs1_decimal,
                         rs2_decimal};
             }
         }
     } else if (opcode == "0110011") {
         if (funct3 == "000") {
             if (funct7 == "0000000") {
-                return {"ADD", 't' + rd_decimal, 't' + rs1_decimal,
-                        't' + rs2_decimal};
+                return {"ADD", 'd' + rd_decimal, 's' + rs1_decimal,
+                        's' + rs2_decimal};
             } else if (funct7 == "0100000") {
-                return {"SUB", 't' + rd_decimal, 't' + rs1_decimal,
-                        't' + rs2_decimal};
+                return {"SUB", 'd' + rd_decimal, 's' + rs1_decimal,
+                        's' + rs2_decimal};
             }
         } else if (funct3 == "001") {
             if (funct7 == "0000000") {
-                return {"SLL", 't' + rd_decimal, 't' + rs1_decimal,
-                        't' + rs2_decimal};
+                return {"SLL", 'd' + rd_decimal, 's' + rs1_decimal,
+                        's' + rs2_decimal};
             }
         } else if (funct3 == "010") {
             if (funct7 == "0000000") {
-                return {"SLT", 't' + rd_decimal, 't' + rs1_decimal,
-                        't' + rs2_decimal};
+                return {"SLT", 'd' + rd_decimal, 's' + rs1_decimal,
+                        's' + rs2_decimal};
             }
         } else if (funct3 == "011") {
             if (funct7 == "0000000") {
-                return {"SLTU", 't' + rd_decimal, 't' + rs1_decimal,
-                        't' + rs2_decimal};
+                return {"SLTU", 'd' + rd_decimal, 's' + rs1_decimal,
+                        's' + rs2_decimal};
             }
         } else if (funct3 == "100") {
             if (funct7 == "0000000") {
-                return {"XOR", 't' + rd_decimal, 't' + rs1_decimal,
-                        't' + rs2_decimal};
+                return {"XOR", 'd' + rd_decimal, 's' + rs1_decimal,
+                        's' + rs2_decimal};
             }
         } else if (funct3 == "101") {
             if (funct7 == "0000000") {
-                return {"SRL", 't' + rd_decimal, 't' + rs1_decimal,
-                        't' + rs2_decimal};
+                return {"SRL", 'd' + rd_decimal, 's' + rs1_decimal,
+                        's' + rs2_decimal};
             } else if (funct7 == "0100000") {
-                return {"SRA", 't' + rd_decimal, 't' + rs1_decimal,
-                        't' + rs2_decimal};
+                return {"SRA", 'd' + rd_decimal, 's' + rs1_decimal,
+                        's' + rs2_decimal};
             }
         } else if (funct3 == "110") {
             if (funct7 == "0000000") {
-                return {"OR", 't' + rd_decimal, 't' + rs1_decimal,
-                        't' + rs2_decimal};
+                return {"OR", 'd' + rd_decimal, 's' + rs1_decimal,
+                        's' + rs2_decimal};
             }
         } else if (funct3 == "111") {
             if (funct7 == "0000000") {
-                return {"AND", 't' + rd_decimal, 't' + rs1_decimal,
-                        't' + rs2_decimal};
+                return {"AND", 'd' + rd_decimal, 's' + rs1_decimal,
+                        's' + rs2_decimal};
             }
         }
     } else if (opcode == "0001111") {
         if (funct3 == "000") {
-            return {"FENCE", 't' + rd_decimal, 't' + rs1_decimal,
+            return {"FENCE", 'd' + rd_decimal, 's' + rs1_decimal,
                     imm11_0_decimal};
         }
     } else if (opcode == "1110011") {
