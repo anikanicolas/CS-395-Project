@@ -133,6 +133,7 @@ int main(int argc, char *argv[]) {
 
     std::cout << "Clock|";
     print_pipeline(pipeline);
+    for (auto &i: pipeline) i = {};
 
     /*
      * I believe we can implement stalling by doing the pipeline in reverse
@@ -141,16 +142,28 @@ int main(int argc, char *argv[]) {
      * decode can't be moved to execute yet, then we'd have to revert it. The
      * first in line should move forward before those waiting behind do.
      */
-    for (size_t clock = 0; clock < instructions.size(); ++clock) {
-        pipeline[0] = {instructions[pc]};
-        pipeline[1] = idecode(pipeline[0][0]);
-        pipeline[2] = rfetch(pipeline[1], registers);
-        pipeline[3] = iexecute(pipeline[2], pc);
-        pipeline[4] = maccess(pipeline[3]);
+    bool go = true;
+    for (size_t clock = 0; go; ++clock) {
         pipeline[5] = rwriteback(pipeline[4], registers);
+        pipeline[4] = maccess(pipeline[3]);
+        pipeline[3] = iexecute(pipeline[2], pc);
+        pipeline[2] = rfetch(pipeline[1], registers);
+        if (!pipeline[0].empty()) {
+            pipeline[1] = idecode(pipeline[0][0]);
+        } else {
+            pipeline[1] = {};
+        }
+        if (pc < instructions.size()) {
+            pipeline[0] = {instructions[pc]};  // instruction fetch
+        } else {
+            pipeline[0] = {};
+        }
         std::cout << std::setw(5) << clock << '|';
         print_pipeline(pipeline);
         ++pc;
+        go = false;
+        for (auto &i: pipeline)
+            if (!i.empty()) go = true;
     }
 
     delete[] registers;

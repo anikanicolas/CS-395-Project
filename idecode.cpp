@@ -21,7 +21,8 @@ std::string to_decimal(const std::string &binary) {
  * @param end last bit to read
  * @return substring of instruction from start to end (not including end)
  */
-std::string isubstr(const std::string &instruction, const size_t &start, const size_t &end) {
+std::string isubstr(const std::string &instruction, const size_t &start,
+                    const size_t &end) {
     return instruction.substr(32 - end, end - start);
 }
 
@@ -31,6 +32,7 @@ std::string isubstr(const std::string &instruction, const size_t &start, const s
  * @return vector of words representing decoded instruction
  */
 std::vector<std::string> idecode(const std::string &instruction) {
+    if (instruction.empty()) return {};
     std::string opcode = isubstr(instruction, 0, 7);
     std::string rd = isubstr(instruction, 7, 12);
     std::string funct3 = isubstr(instruction, 12, 15);

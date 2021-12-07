@@ -33,13 +33,14 @@ std::string rmprefix(const std::string &word) {
  * @return new copy of executed instruction with fetched registers
  */
 std::vector<std::string> rwriteback(const std::vector<std::string> &executed, uint32_t regs[32]) {
+    if (executed.empty() || executed[0].empty()) return {};
     /// return of rfetch is initially executed input
     if (executed.size() == 3 && executed[0] == "WB" && executed[1][0] == 'd') {
         std::string dest = executed[1];
         std::string src1 = executed[2];
         size_t addr = stoul(rmprefix(dest));
         if (executed[2][0] == 'b') {
-            return {rset(addr, stoul(rmprefix(src1)), regs)};
+            return {rset(addr, static_cast<uint32_t>(stoul(rmprefix(src1))), regs)};
         } else {
             auto val = static_cast<uint32_t>(stoul(src1));
             return {rset(addr, val, regs)};
