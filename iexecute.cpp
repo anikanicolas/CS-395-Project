@@ -33,7 +33,7 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded) {
              * LUI (load upper immediate) places the 20-bit U-immediate into bits 31–12 of register dest
              * and places zero in the lowest 12 bits.
              */
-            ret = {"WB", dest, "0b"};
+            ret = {"WB", dest, 'b' + src1 + "000000000000"};
         } else if (op == "ADD") {
             // ADD performs the addition of src1 and src2
             ret = {"WB", dest, std::to_string(stoul(src1) + stoul(src2))};

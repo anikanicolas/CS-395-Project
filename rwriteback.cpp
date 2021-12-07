@@ -22,6 +22,10 @@ std::string rset(const size_t &addr, const uint32_t &val, uint32_t regs[32]) {
     return {"ZERO"};
 }
 
+std::string rmprefix(const std::string &word) {
+    return word.substr(1, word.length() - 1);
+}
+
 /**
  * Find register addresses in executed instruction and replace with values
  * @param executed vector of words representing instruction
@@ -32,10 +36,15 @@ std::vector<std::string> rwriteback(const std::vector<std::string> &executed, ui
     /// return of rfetch is initially executed input
     if (executed.size() == 3 && executed[0] == "WB" && executed[1][0] == 'd') {
         std::string dest = executed[1];
-        std::string sval = executed[2];
-        size_t addr = stoul(dest.substr(1, dest.length() - 1));
-        auto val = static_cast<uint32_t>(stoul(sval));
-        return {rset(addr, val, regs)};
+        std::string src1 = executed[2];
+        size_t addr = stoul(rmprefix(dest));
+        if (executed[2][0] == 'b') {
+            return {rset(addr, stoul(rmprefix(src1)), regs)};
+        } else {
+            auto val = static_cast<uint32_t>(stoul(src1));
+            return {rset(addr, val, regs)};
+        }
+        return {"FAILURE"};
     }
     return {"NONE"};
 }
