@@ -10,7 +10,7 @@
  * @param decoded instruction to execute
  * @return executed instruction
  */
-std::vector<std::string> iexecute(const std::vector<std::string> &decoded) {
+std::vector<std::string> iexecute(const std::vector<std::string> &decoded, const size_t &pc) {
     /// execution state to return, FAILURE by default
     std::vector<std::string> ret = {"FAILURE"};
     if (!decoded.empty()) {
@@ -34,20 +34,8 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded) {
              * and places zero in the lowest 12 bits.
              */
             ret = {"WB", dest, 'b' + src1 + "000000000000"};
-        } else if (op == "ADD") {
-            // ADD performs the addition of src1 and src2
-            ret = {"WB", dest, std::to_string(stoul(src1) + stoul(src2))};
-        } else if (op == "SUB") {
-            // SUB performs the subtraction of src2 from src1
-            ret = {"WB", dest, std::to_string(stoul(src1) - stoul(src2))};
-            /*
-             * (add upper immediate to pc) is used to build pc-relative addresses and uses the
-             * U-type format. AUIPC forms a 32-bit offset from the 20-bit U-immediate, filling
-             * in the lowest 12 bits with zeros, adds this offset to the pc, then places the
-             * result in register rd.
-             */
         } else if (op == "AUIPC") {
-
+            ret = {"WB", dest, std::to_string(stoul(src1 + "000000000000") + pc)};
         } else if (op == "JAL") {
 
         } else if (op == "JALR") {
@@ -98,6 +86,18 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded) {
 
         } else if (op == "SRAI") {
 
+        } else if (op == "ADD") {
+            // ADD performs the addition of src1 and src2
+            ret = {"WB", dest, std::to_string(stoul(src1) + stoul(src2))};
+        } else if (op == "SUB") {
+            // SUB performs the subtraction of src2 from src1
+            ret = {"WB", dest, std::to_string(stoul(src1) - stoul(src2))};
+            /*
+             * (add upper immediate to pc) is used to build pc-relative addresses and uses the
+             * U-type format. AUIPC forms a 32-bit offset from the 20-bit U-immediate, filling
+             * in the lowest 12 bits with zeros, adds this offset to the pc, then places the
+             * result in register rd.
+             */
         } else if (op == "SLL") {
 
         } else if (op == "SLT") {

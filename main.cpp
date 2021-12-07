@@ -145,7 +145,7 @@ int main(int argc, char *argv[]) {
         pipeline[0] = {instructions[pc]};
         pipeline[1] = idecode(pipeline[0][0]);
         pipeline[2] = rfetch(pipeline[1], registers);
-        pipeline[3] = iexecute(pipeline[2]);
+        pipeline[3] = iexecute(pipeline[2], pc);
         pipeline[4] = maccess(pipeline[3]);
         pipeline[5] = rwriteback(pipeline[4], registers);
         std::cout << std::setw(5) << clock << '|';
