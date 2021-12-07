@@ -42,23 +42,16 @@
 }
 
 /**
- * Read instructions from file and return as vector
- * @param filename name of file to read instructions from
+ * Read instructions from input stream and return as vector
+ * @param input_stream to read instructions from
  * @return vector of instructions
  */
-std::vector<std::string> read(const std::string &filename) {
-    /// input file stream
-    std::ifstream file;
+std::vector<std::string> read(std::istream &input_stream) {
     /// line gotten from file
     std::string line;
     /// vector of instructions to return
     std::vector<std::string> instructions;
-    file.open(filename);
-
-    if (!file) fail("File " + filename + " not opened");
-    while (file >> line) instructions.push_back(line);
-
-    file.close();
+    while (input_stream >> line) instructions.push_back(line);
     return instructions;
 }
 
@@ -100,13 +93,26 @@ void print_pipeline(std::vector<std::string> *pipeline) {
 
 /**
  * Read program argument and call helper functions
- * @param argc argument count including program name should be 2
+ * @param argc argument count including program name should be 1 or 2
  * @param argv array of C-string arguments including filename
  * @return exit status
  */
 int main(int argc, char *argv[]) {
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " [filename]\n";
+    /// vector of binary instruction strings read from file
+    std::vector<std::string> instructions;
+    if (argc == 1) {
+        instructions = read(std::cin);
+    } else if (argc == 2) {
+        /// name of file to read instructions from
+        std::string filename = argv[1];
+        /// input file stream
+        std::ifstream file;
+        file.open(filename);
+        if (!file) fail("File " + filename + " not opened");
+        instructions = read(file);
+        file.close();
+    } else {
+        std::cerr << "Usage: " << basename(argv[0]) << " [filename]\n";
         return EXIT_FAILURE;
     }
 
@@ -124,9 +130,6 @@ int main(int argc, char *argv[]) {
     for (uint32_t i = 0; i < 32; ++i) {
         registers[i] = i;
     }
-
-    /// vector of binary instruction strings read from file
-    std::vector<std::string> instructions = read(argv[1]);
 
     std::cout << "Clock|";
     print_pipeline(pipeline);
