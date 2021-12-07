@@ -79,15 +79,15 @@ std::string vectostr(const std::vector<std::string> &vec) {
 void print_pipeline(std::vector<std::string> *pipeline) {
     std::cout << std::setw(32) << vectostr(pipeline[0]);
     std::cout << '|';
-    std::cout << std::setw(18) << vectostr(pipeline[1]);
+    std::cout << std::setw(32) << vectostr(pipeline[1]);
     std::cout << '|';
-    std::cout << std::setw(14) << vectostr(pipeline[2]);
+    std::cout << std::setw(32) << vectostr(pipeline[2]);
     std::cout << '|';
-    std::cout << std::setw(14) << vectostr(pipeline[3]);
+    std::cout << std::setw(32) << vectostr(pipeline[3]);
     std::cout << '|';
-    std::cout << std::setw(16) << vectostr(pipeline[4]);
+    std::cout << std::setw(32) << vectostr(pipeline[4]);
     std::cout << '|';
-    std::cout << std::setw(16) << vectostr(pipeline[5]);
+    std::cout << std::setw(32) << vectostr(pipeline[5]);
     std::cout << std::endl;
 }
 
