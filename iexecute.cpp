@@ -86,20 +86,34 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded, const
             }
             return {};
         } else if (op == "LB") {
-            return {"MEM", dest,};
+          // loads an 8-bit value from memory, then sign-extends to 32-bits before storing in rd
+            return {"MEM", dest, std::to_string(stoul(src2) + stoul(src3)), "LB"};
         } else if (op == "LH") {
             // The LH loads a 16-bit value from memory, then sign-extends to
             // 32-bits before storing in rd
-            return {"MEM", dest,};
+            return {"MEM", dest, std::to_string(stoul(src2) + stoul(src3)), "LH"};
         } else if (op == "LW") {
             //  The LW instruction loads a 32-bit value from memory into rd
-            return {"MEM", dest, std::to_string(stoul(src1) + stoul(src2))};
+            return {"MEM", dest, std::to_string(stoul(src2) + stoul(src2)), "LW"};
 
         } else if (op == "LBU") {
+          // loads 8-bit values from memory but then zero extends to 32-bits before storing in rd
+            return {"MEM", dest, std::to_string(stoul(src2) + stoul(src2)), "LBU"};
         } else if (op == "LHU") {
+          // loads a 16-bit value from memory but then zero extends to 32-bits before storing in rd
+            return {"MEM", dest, std::to_string(stoul(src2) + stoul(src2)), "LHU"};
         } else if (op == "SB") {
+          // store 8-bit values from the low bits of register rs2 to memory
+          src2 = "00" + src2
+          return {"MEM", src2, std::to_string(stoul(dest)+stoul(src1)+stoul(src3)), "SB"};
         } else if (op == "SH") {
+          // store 16-bit values from the low bits of register rs2 to memory
+          src2 = "0000000000" + src2
+          return {"MEM", src2, std::to_string(stoul(dest)+stoul(src1)+stoul(src3)), "SH"};
         } else if (op == "SW") {
+          // store 32-bit values from the low bits of register rs2 to memory
+          src2 = "00000000000000000000000000" + src2
+          return {"MEM", src2, std::to_string(stoul(dest)+stoul(src1)+stoul(src3)), "SW"};
         } else if (op == "ADDI") {
         } else if (op == "SLTI") {
         } else if (op == "SLTIU") {
