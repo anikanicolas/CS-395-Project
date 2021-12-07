@@ -40,6 +40,86 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded) {
         } else if (op == "SUB") {
             // SUB performs the subtraction of src2 from src1
             ret = {"WB", dest, std::to_string(stoul(src1) - stoul(src2))};
+            /*
+             * (add upper immediate to pc) is used to build pc-relative addresses and uses the
+             * U-type format. AUIPC forms a 32-bit offset from the 20-bit U-immediate, filling
+             * in the lowest 12 bits with zeros, adds this offset to the pc, then places the
+             * result in register rd.
+             */
+        } else if (op == "AUIPC") {
+
+        } else if (op == "JAL") {
+
+        } else if (op == "JALR") {
+
+        } else if (op == "BEQ") {
+
+        } else if (op == "BNE") {
+
+        } else if (op == "BLT") {
+
+        } else if (op == "BGE") {
+
+        } else if (op == "BLTU") {
+
+        } else if (op == "BGEU") {
+
+        } else if (op == "LB") {
+
+        } else if (op == "LH") {
+
+        } else if (op == "LW") {
+
+        } else if (op == "LBU") {
+
+        } else if (op == "LHU") {
+
+        } else if (op == "SB") {
+
+        } else if (op == "SH") {
+
+        } else if (op == "SW") {
+
+        } else if (op == "ADDI") {
+
+        } else if (op == "SLTI") {
+
+        } else if (op == "SLTIU") {
+
+        } else if (op == "XORI") {
+
+        } else if (op == "ORI") {
+
+        } else if (op == "ANDI") {
+
+        } else if (op == "SLLI") {
+
+        } else if (op == "SRLI") {
+
+        } else if (op == "SRAI") {
+
+        } else if (op == "SLL") {
+
+        } else if (op == "SLT") {
+
+        } else if (op == "SLTU") {
+
+        } else if (op == "XOR") {
+
+        } else if (op == "SRL") {
+
+        } else if (op == "SRA") {
+
+        } else if (op == "OR") {
+
+        } else if (op == "AND") {
+
+        } else if (op == "FENCE") {
+
+        } else if (op == "ECALL") {
+
+        } else if (op == "EBREAK") {
+
         }
     }
     return ret;
