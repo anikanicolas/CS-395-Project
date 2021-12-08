@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "utils.h"
 
@@ -98,7 +99,7 @@ std::vector<std::string> maccess(const std::vector<std::string> &executed, std::
             }
         }
     } else if (op[0] == 'W') {
-        return {"NONE"};
+        return executed;
     }
     return {"FAILURE"};
 }
