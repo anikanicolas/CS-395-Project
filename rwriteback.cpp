@@ -33,7 +33,8 @@ std::string rset(const size_t &addr, const uint32_t &val, uint32_t regs[32], boo
  * @param regs array of 32 unsigned 32-bit integer registers
  * @return new copy of executed instruction with fetched registers
  */
-std::vector<std::string> rwriteback(const std::vector<std::string> &executed, uint32_t regs[32], bool good_register[32]) {
+std::vector<std::string>
+rwriteback(const std::vector<std::string> &executed, uint32_t regs[32], bool good_register[32]) {
     if (executed.empty() || executed[0].empty()) return {};
     /// return of rfetch is initially executed input
     if (executed.size() == 3 && executed[0] == "WB" && executed[1][0] == 'd') {
