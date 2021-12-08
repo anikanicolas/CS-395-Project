@@ -47,125 +47,127 @@ std::vector<std::string> idecode(const std::string &inst) {
     std::string dest = 'd' + to_decimal(rd);
     std::string src1 = 's' + to_decimal(rs1);
     std::string src2 = 's' + to_decimal(rs2);
+    std::vector<std::string> ret = {"FAILURE"};
 
     if (opcode == "0110111") {
-        return {"LUI", dest, imm31_12};
+        ret = {"LUI", dest, imm31_12};
     } else if (opcode == "0010111") {
-        return {"AUIPC", dest, imm31_12};
+        ret = {"AUIPC", dest, imm31_12};
     } else if (opcode == "1101111") {
-        return {"JAL", dest, src1, imm20_10_1_11_19_12};
+        ret = {"JAL", dest, src1, imm20_10_1_11_19_12};
     } else if (opcode == "1100111") {
         if (funct3 == "000") {
-            return {"JALR", dest, src1, imm11_0};
+            ret = {"JALR", dest, src1, imm11_0};
         }
     } else if (opcode == "1100011") {
         if (funct3 == "000") {
-            return {"BEQ", src1, src2, imm12_10_5_4_1_11};
+            ret = {"BEQ", src1, src2, imm12_10_5_4_1_11};
         } else if (funct3 == "001") {
-            return {"BNE", src1, src2, imm12_10_5_4_1_11};
+            ret = {"BNE", src1, src2, imm12_10_5_4_1_11};
         } else if (funct3 == "100") {
-            return {"BLT", src1, src2, imm12_10_5_4_1_11};
+            ret = {"BLT", src1, src2, imm12_10_5_4_1_11};
         } else if (funct3 == "101") {
-            return {"BGE", src1, src2, imm12_10_5_4_1_11};
+            ret = {"BGE", src1, src2, imm12_10_5_4_1_11};
         } else if (funct3 == "110") {
-            return {"BLTU", src1, src2, imm12_10_5_4_1_11};
+            ret = {"BLTU", src1, src2, imm12_10_5_4_1_11};
         } else if (funct3 == "111") {
-            return {"BGEU", src1, src2, imm12_10_5_4_1_11};
+            ret = {"BGEU", src1, src2, imm12_10_5_4_1_11};
         }
     } else if (opcode == "0000011") {
         if (funct3 == "000") {
-            return {"LB", dest, src1, imm11_0};
+            ret = {"LB", dest, src1, imm11_0};
         } else if (funct3 == "001") {
-            return {"LH", dest, src1, imm11_0};
+            ret = {"LH", dest, src1, imm11_0};
         } else if (funct3 == "010") {
-            return {"LW", dest, src1, imm11_0};
+            ret = {"LW", dest, src1, imm11_0};
         } else if (funct3 == "100") {
-            return {"LBU", dest, src1, imm11_0};
+            ret = {"LBU", dest, src1, imm11_0};
         } else if (funct3 == "101") {
-            return {"LHU", dest, src1, imm11_0};
+            ret = {"LHU", dest, src1, imm11_0};
         }
     } else if (opcode == "0100011") {
         if (funct3 == "000") {
-            return {"SB", src1, src2, imm11_5_4_0};
+            ret = {"SB", src1, src2, imm11_5_4_0};
         } else if (funct3 == "001") {
-            return {"SH", src1, src2, imm11_5_4_0};
+            ret = {"SH", src1, src2, imm11_5_4_0};
         } else if (funct3 == "010") {
-            return {"SW", src1, src2, imm11_5_4_0};
+            ret = {"SW", src1, src2, imm11_5_4_0};
         }
     } else if (opcode == "0010011") {
         if (funct3 == "000") {
-            return {"ADDI", dest, src1, imm11_0};
+            ret = {"ADDI", dest, src1, imm11_0};
         } else if (funct3 == "010") {
-            return {"SLTI", dest, src1, imm11_0};
+            ret = {"SLTI", dest, src1, imm11_0};
         } else if (funct3 == "011") {
-            return {"SLTIU", dest, src1, imm11_0};
+            ret = {"SLTIU", dest, src1, imm11_0};
         } else if (funct3 == "100") {
-            return {"XORI", dest, src1, imm11_0};
+            ret = {"XORI", dest, src1, imm11_0};
         } else if (funct3 == "110") {
-            return {"ORI", dest, src1, imm11_0};
+            ret = {"ORI", dest, src1, imm11_0};
         } else if (funct3 == "111") {
-            return {"ANDI", dest, src1, imm11_0};
+            ret = {"ANDI", dest, src1, imm11_0};
         } else if (funct3 == "001") {
             if (funct7 == "0000000") {
-                return {"SLLI", dest, src1, shamt};
+                ret = {"SLLI", dest, src1, shamt};
             }
         } else if (funct3 == "101") {
             if (funct7 == "0000000") {
-                return {"SRLI", dest, src1, shamt};
+                ret = {"SRLI", dest, src1, shamt};
             } else if (funct7 == "0100000") {
-                return {"SRAI", dest, src1, shamt};
+                ret = {"SRAI", dest, src1, shamt};
             }
         }
     } else if (opcode == "0110011") {
         if (funct3 == "000") {
             if (funct7 == "0000000") {
-                return {"ADD", dest, src1, src2};
+                ret = {"ADD", dest, src1, src2};
             } else if (funct7 == "0100000") {
-                return {"SUB", dest, src1, src2};
+                ret = {"SUB", dest, src1, src2};
             }
         } else if (funct3 == "001") {
             if (funct7 == "0000000") {
-                return {"SLL", dest, src1, src2};
+                ret = {"SLL", dest, src1, src2};
             }
         } else if (funct3 == "010") {
             if (funct7 == "0000000") {
-                return {"SLT", dest, src1, src2};
+                ret = {"SLT", dest, src1, src2};
             }
         } else if (funct3 == "011") {
             if (funct7 == "0000000") {
-                return {"SLTU", dest, src1, src2};
+                ret = {"SLTU", dest, src1, src2};
             }
         } else if (funct3 == "100") {
             if (funct7 == "0000000") {
-                return {"XOR", dest, src1, src2};
+                ret = {"XOR", dest, src1, src2};
             }
         } else if (funct3 == "101") {
             if (funct7 == "0000000") {
-                return {"SRL", dest, src1, src2};
+                ret = {"SRL", dest, src1, src2};
             } else if (funct7 == "0100000") {
-                return {"SRA", dest, src1, src2};
+                ret = {"SRA", dest, src1, src2};
             }
         } else if (funct3 == "110") {
             if (funct7 == "0000000") {
-                return {"OR", dest, src1, src2};
+                ret = {"OR", dest, src1, src2};
             }
         } else if (funct3 == "111") {
             if (funct7 == "0000000") {
-                return {"AND", dest, src1, src2};
+                ret = {"AND", dest, src1, src2};
             }
         }
     } else if (opcode == "0001111") {
         if (funct3 == "000") {
-            return {"FENCE", dest, src1, succ, pred, fm};
+            ret = {"FENCE", dest, src1, succ, pred, fm};
         }
     } else if (opcode == "1110011") {
         if (funct3 == "000") {
             if (imm11_0 == "000000000000") {
-                return {"ECALL"};
+                ret = {"ECALL"};
             } else if (imm11_0 == "000000000001") {
-                return {"EBREAK"};
+                ret = {"EBREAK"};
             }
         }
     }
-    return {"FAILURE"};
+
+    return ret;
 }
