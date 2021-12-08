@@ -2,7 +2,7 @@
  * Instruction decode: decode the instruction
  */
 #include "idecode.h"
-
+#include <iostream>
 #include <algorithm>
 #include <string>
 #include <vector>
@@ -168,6 +168,5 @@ std::vector<std::string> idecode(const std::string &inst) {
             }
         }
     }
-
     return ret;
 }

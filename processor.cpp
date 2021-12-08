@@ -26,6 +26,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <libgen.h>
 
 #include "idecode.h"
 #include "iexecute.h"
@@ -39,9 +40,9 @@
  * @param pipeline basic five-stage risc pipeline to print
  */
 static void print_pipeline(std::vector<std::string> *pipeline) {
-    std::cout << std::left << std::setw(50) << vectostr(pipeline[0]) << '|';
-    std::cout << std::setw(32) << vectostr(pipeline[1]) << '|';
-    std::cout << std::setw(88) << vectostr(pipeline[2]) << '|';
+    std::cout << std::left << std::setw(32) << vectostr(pipeline[0]) << '|';
+    std::cout << std::setw(30) << vectostr(pipeline[1]) << '|';
+    std::cout << std::setw(40) << vectostr(pipeline[2]) << '|';
     std::cout << std::setw(40) << vectostr(pipeline[3]) << '|';
     std::cout << std::setw(40) << vectostr(pipeline[4]) << '|';
     std::cout << std::setw(8) << vectostr(pipeline[5]) << '|' << std::endl;
@@ -89,7 +90,7 @@ int main(int argc, char *argv[]) {
     // array of booleans for each register to check if it's being written to or not
     auto good_register = new bool[32];
     for (int i = 0; i < 32; i++) {
-      good_register[i] = false;
+      good_register[i] = true;
     }
 
     auto *memory = new std::byte[4096];
@@ -108,25 +109,43 @@ int main(int argc, char *argv[]) {
      * decode can't be moved to execute yet, then we'd have to revert it. The
      * first in line should move forward before those waiting behind do.
      */
+
     bool go = true;
+    std::vector<std::string> check = {"STALL"};
+    std::vector<std::string> rememberins;
     for (size_t clock = 0; go; ++clock) {
-        pipeline[5] = rwriteback(pipeline[4], registers);
+      // if you have a stall at register fetch, then you want the output to say
+      //stall for each iteration at register fetch stage as long as the register is not available
+      // you also want any instructions before it go proceed as normal
+        pipeline[5] = rwriteback(pipeline[4], registers, good_register);
         pipeline[4] = maccess(pipeline[3], memory);
         pipeline[3] = iexecute(pipeline[2], pc);
-        pipeline[2] = rfetch(pipeline[1], registers, good_register);
-        if (!pipeline[0].empty()) {
-            pipeline[1] = idecode(pipeline[0][0]);
-        } else {
-            pipeline[1] = {};
+        if (pipeline[3] == check) {
+          pipeline[3] = {};
         }
-        if (pc < instructions.size()) {
-            pipeline[0] = {instructions[pc]};  // instruction fetch
-        } else {
-            pipeline[0] = {};
+        pipeline[2] = rfetch(pipeline[1], registers, good_register);
+        if (pipeline[2] != check) {
+          if (!pipeline[0].empty()) {
+              pipeline[1] = idecode(pipeline[0][0]);
+          } else {
+              pipeline[1] = {};
+          }
+            if (pc < instructions.size()) {
+                pipeline[0] = {instructions[pc]};  // instruction fetch
+            } else {
+                pipeline[0] = {};
+            }
+            ++pc;
+        }
+        if (pipeline[2] == check) {
+          rememberins = pipeline[1];
+          pipeline[1] = {};
         }
         std::cout << std::setw(4) << clock << '|';
         print_pipeline(pipeline);
-        ++pc;
+        if (pipeline[2] == check) {
+          pipeline[1] = rememberins;
+        }
         go = false;
         for (auto &i: pipeline)
             if (!i.empty()) go = true;
