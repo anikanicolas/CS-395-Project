@@ -130,7 +130,11 @@ int main(int argc, char *argv[]) {
     for (uint32_t i = 0; i < 32; ++i) {
         registers[i] = i;
     }
-
+    // array of booleans for each register to check if it's being written to or not
+    std::vector<bool> good_register;
+    for (int i = 0; i < 32; i++) {
+      good_register[i] = false;
+    }
     std::cout << "Clock|";
     print_pipeline(pipeline);
     for (auto &i: pipeline) i = {};
@@ -147,7 +151,7 @@ int main(int argc, char *argv[]) {
         pipeline[5] = rwriteback(pipeline[4], registers);
         pipeline[4] = maccess(pipeline[3]);
         pipeline[3] = iexecute(pipeline[2], pc);
-        pipeline[2] = rfetch(pipeline[1], registers);
+        pipeline[2] = rfetch(pipeline[1], registers, good_register);
         if (!pipeline[0].empty()) {
             pipeline[1] = idecode(pipeline[0][0]);
         } else {

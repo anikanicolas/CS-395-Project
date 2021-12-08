@@ -116,6 +116,7 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded, const
           // store 32-bit values from the low bits of register rs2 to memory
           return {"MEM", src2, std::to_string(stoul(dest)+stoul(src1)+stoul(src3)), "SW"};
         } else if (op == "ADDI") {
+          //may stall for loads
         } else if (op == "SLTI") {
         } else if (op == "SLTIU") {
         } else if (op == "XORI") {

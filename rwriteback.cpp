@@ -16,6 +16,7 @@
  */
 std::string rset(const size_t &addr, const uint32_t &val, uint32_t regs[32]) {
     if (addr) {
+      //make good_register[addr] = true;
         regs[addr] = val;
         return {"SUCCESS"};
     }
