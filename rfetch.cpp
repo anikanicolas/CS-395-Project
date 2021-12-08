@@ -14,7 +14,7 @@
  * @param regs array of registers
  * @return string representing value of register
  */
-std::string rget(const uint32_t &addr, const uint32_t regs[]) {
+std::string rget(const size_t &addr, const uint32_t regs[]) {
     if (!addr) {
         return "00000000000000000000000000000000";
     } else {
@@ -37,7 +37,7 @@ std::vector<std::string> rfetch(const std::vector<std::string> &decoded, const u
             /// word to check if it is a register address to fetch
             std::string word = decoded[i];
             if (word[0] == 's') {
-                ret[i] = rget(xstoui(word.substr(1, word.length() - 1)), regs);
+                ret[i] = rget(stoul(word.substr(1, word.length() - 1)), regs);
             }
         }
     }

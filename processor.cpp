@@ -39,7 +39,7 @@
  * @param pipeline basic five-stage risc pipeline to print
  */
 static void print_pipeline(std::vector<std::string> *pipeline) {
-    std::cout << std::left << std::setw(32) << vectostr(pipeline[0]) << '|';
+    std::cout << std::left << std::setw(50) << vectostr(pipeline[0]) << '|';
     std::cout << std::setw(32) << vectostr(pipeline[1]) << '|';
     std::cout << std::setw(88) << vectostr(pipeline[2]) << '|';
     std::cout << std::setw(40) << vectostr(pipeline[3]) << '|';
