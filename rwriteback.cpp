@@ -1,8 +1,12 @@
 /**
  * Register write back: write the result into a register
  */
+#include "rwriteback.h"
+
 #include <string>
 #include <vector>
+
+#include "utils.h"
 
 // write-back stage
 // return a register with the memory data
@@ -23,10 +27,6 @@ std::string rset(const size_t &addr, const uint32_t &val, uint32_t regs[32]) {
     return {"ZERO"};
 }
 
-std::string rmprefix(const std::string &word) {
-    return word.substr(1, word.length() - 1);
-}
-
 /**
  * Find register addresses in executed instruction and replace with values
  * @param executed vector of words representing instruction
@@ -40,13 +40,8 @@ std::vector<std::string> rwriteback(const std::vector<std::string> &executed, ui
         std::string dest = executed[1];
         std::string src1 = executed[2];
         size_t addr = stoul(rmprefix(dest));
-        if (executed[2][0] == 'b') {
-            return {rset(addr, static_cast<uint32_t>(stoul(rmprefix(src1))), regs)};
-        } else {
-            auto val = static_cast<uint32_t>(stoul(src1));
-            return {rset(addr, val, regs)};
-        }
-        return {"FAILURE"};
+        uint32_t val = xstoui(src1);
+        return {rset(addr, val, regs)};
     }
     return {"NONE"};
 }

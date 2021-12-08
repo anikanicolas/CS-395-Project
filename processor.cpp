@@ -17,6 +17,7 @@
  * TODO: ALU, ...
  * TODO(anikanicolas): add more instructions to input.txt or add input1.txt
  */
+#include <cstddef>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
@@ -26,69 +27,24 @@
 #include <string>
 #include <vector>
 
-#include "idecode.cpp"
-#include "iexecute.cpp"
-#include "maccess.cpp"
-#include "rfetch.cpp"
-#include "rwriteback.cpp"
-
-/**
- * Print error message and terminate program execution with failure status
- * @param message First part of error message to print
- */
-[[noreturn]] void fail(const std::string &message) {
-    perror(message.c_str());
-    exit(EXIT_FAILURE);
-}
-
-/**
- * Read instructions from input stream and return as vector
- * @param input_stream to read instructions from
- * @return vector of instructions
- */
-std::vector<std::string> read(std::istream &input_stream) {
-    /// line gotten from file
-    std::string line;
-    /// vector of instructions to return
-    std::vector<std::string> instructions;
-    while (input_stream >> line) instructions.push_back(line);
-    return instructions;
-}
-
-/**
- * Convert vector to string
- * @param vec vector to convert
- * @return string of each item in vector separated by space
- */
-std::string vectostr(const std::vector<std::string> &vec) {
-    /// string to return
-    std::string str;
-    if (!vec.empty()) {
-        str.append(vec[0]);
-        for (size_t i = 1; i < vec.size(); ++i) {
-            str.append(' ' + vec[i]);
-        }
-    }
-    return str;
-}
+#include "idecode.h"
+#include "iexecute.h"
+#include "maccess.h"
+#include "rfetch.h"
+#include "rwriteback.h"
+#include "utils.h"
 
 /**
  * Print pipeline as table
  * @param pipeline basic five-stage risc pipeline to print
  */
-void print_pipeline(std::vector<std::string> *pipeline) {
-    std::cout << std::setw(32) << vectostr(pipeline[0]);
-    std::cout << '|';
-    std::cout << std::setw(32) << vectostr(pipeline[1]);
-    std::cout << '|';
-    std::cout << std::setw(32) << vectostr(pipeline[2]);
-    std::cout << '|';
-    std::cout << std::setw(32) << vectostr(pipeline[3]);
-    std::cout << '|';
-    std::cout << std::setw(32) << vectostr(pipeline[4]);
-    std::cout << '|';
-    std::cout << std::setw(32) << vectostr(pipeline[5]);
-    std::cout << std::endl;
+static void print_pipeline(std::vector<std::string> *pipeline) {
+    std::cout << std::left << std::setw(50) << vectostr(pipeline[0]) << '|';
+    std::cout << std::setw(32) << vectostr(pipeline[1]) << '|';
+    std::cout << std::setw(88) << vectostr(pipeline[2]) << '|';
+    std::cout << std::setw(40) << vectostr(pipeline[3]) << '|';
+    std::cout << std::setw(40) << vectostr(pipeline[4]) << '|';
+    std::cout << std::setw(8) << vectostr(pipeline[5]) << '|' << std::endl;
 }
 
 /**
@@ -120,11 +76,11 @@ int main(int argc, char *argv[]) {
     std::vector<std::string> pipeline[6] = {{"Instruction Fetch"},
                                             {"Instruction Decode"},
                                             {"Register Fetch"},
-                                            {"Execute"},
+                                            {"Instruction Execute"},
                                             {"Memory access"},
-                                            {"Register Writeback"}};
+                                            {"Reg WB"}};
     /// program counter holds the address of the current instruction
-    size_t pc = 0;
+    uint32_t pc = 0;
     /// array of 32 unsigned 32-bit integer registers (0 is unused)
     auto *registers = new uint32_t[32];
     for (uint32_t i = 0; i < 32; ++i) {
@@ -135,7 +91,13 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < 32; i++) {
       good_register[i] = false;
     }
-    std::cout << "Clock|";
+
+    auto *memory = new std::byte[4096];
+    for (size_t i = 0; i < 4096; ++i) {
+        memory[i] = std::byte(i);
+    }
+
+    std::cout << "Clck|";
     print_pipeline(pipeline);
     for (auto &i: pipeline) i = {};
 
@@ -149,7 +111,7 @@ int main(int argc, char *argv[]) {
     bool go = true;
     for (size_t clock = 0; go; ++clock) {
         pipeline[5] = rwriteback(pipeline[4], registers);
-        pipeline[4] = maccess(pipeline[3]);
+        pipeline[4] = maccess(pipeline[3], memory);
         pipeline[3] = iexecute(pipeline[2], pc);
         pipeline[2] = rfetch(pipeline[1], registers, good_register);
         if (!pipeline[0].empty()) {
@@ -162,7 +124,7 @@ int main(int argc, char *argv[]) {
         } else {
             pipeline[0] = {};
         }
-        std::cout << std::setw(5) << clock << '|';
+        std::cout << std::setw(4) << clock << '|';
         print_pipeline(pipeline);
         ++pc;
         go = false;
@@ -171,5 +133,6 @@ int main(int argc, char *argv[]) {
     }
 
     delete[] registers;
+    delete[] memory;
     return EXIT_SUCCESS;
 }

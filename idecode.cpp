@@ -1,48 +1,48 @@
 /**
  * Instruction decode: decode the instruction
  */
+#include "idecode.h"
+
 #include <algorithm>
 #include <string>
 #include <vector>
 
-/**
- * Convert binary string to decimal string
- * @param binary string to convert
- * @return decimal string
- */
-std::string to_decimal(const std::string &binary) {
-    return std::to_string(stoul(binary, nullptr, 2));
-}
+#include "utils.h"
 
 /**
  * Get substring of instruction (first bit of instruction is 31, last bit is 0)
  * @param instruction to get substring of
  * @param start first bit to read
  * @param end last bit to read
- * @return substring of instruction from start to end (not including end)
+ * @return substring of instruction from start to end (inclusive)
  */
-std::string isubstr(const std::string &instruction, const size_t &start,
-                    const size_t &end) {
-    return instruction.substr(32 - end, end - start);
+std::string isubstr(const std::string &instruction, const size_t &end, const size_t &start) {
+    return instruction.substr(31 - end, end - start + 1);
 }
 
 /**
- * Decode instruction
- * @param instruction to decode
- * @return vector of words representing decoded instruction
+ * Decode inst
+ * @param inst to decode
+ * @return vector of words representing decoded inst
  */
-std::vector<std::string> idecode(const std::string &instruction) {
-    if (instruction.empty()) return {};
-    std::string opcode = isubstr(instruction, 0, 7);
-    std::string rd = isubstr(instruction, 7, 12);
-    std::string funct3 = isubstr(instruction, 12, 15);
-    std::string rs1 = isubstr(instruction, 15, 20);
-    std::string rs2 = isubstr(instruction, 20, 25);
-    std::string funct7 = isubstr(instruction, 25, 32);
-    std::string imm11_0 = isubstr(instruction, 20, 32);
-    std::string imm31_12 = isubstr(instruction, 12, 32);
-    const std::string &imm4_0 = rd;
-    const std::string &imm11_5 = funct7;
+std::vector<std::string> idecode(const std::string &inst) {
+    if (inst.empty()) return {};
+    std::string opcode = isubstr(inst, 6, 0);
+    std::string rd = isubstr(inst, 11, 7);
+    std::string funct3 = isubstr(inst, 14, 12);
+    std::string rs1 = isubstr(inst, 19, 15);
+    std::string rs2 = isubstr(inst, 24, 20);
+    std::string funct7 = isubstr(inst, 31, 25);
+    std::string imm11_0 = isubstr(inst, 31, 20);
+    std::string imm31_12 = isubstr(inst, 31, 12);
+    std::string imm12_10_5_4_1_11 =
+            isubstr(inst, 31, 31) + isubstr(inst, 7, 7) + isubstr(inst, 30, 25) + isubstr(inst, 11, 8);
+    std::string imm20_10_1_11_19_12 =
+            isubstr(inst, 31, 31) + isubstr(inst, 19, 12) + isubstr(inst, 20, 20) + isubstr(inst, 30, 21);
+    std::string imm11_5_4_0 = funct7 + rd;
+    std::string fm = isubstr(inst, 31, 28);
+    std::string pred = isubstr(inst, 27, 24);
+    std::string succ = isubstr(inst, 23, 20);
     const std::string &shamt = rs2;
     std::string dest = 'd' + to_decimal(rd);
     std::string src1 = 's' + to_decimal(rs1);
@@ -53,24 +53,24 @@ std::vector<std::string> idecode(const std::string &instruction) {
     } else if (opcode == "0010111") {
         return {"AUIPC", dest, imm31_12};
     } else if (opcode == "1101111") {
-        return {"JAL", dest, imm31_12};
+        return {"JAL", dest, src1, imm20_10_1_11_19_12};
     } else if (opcode == "1100111") {
         if (funct3 == "000") {
             return {"JALR", dest, src1, imm11_0};
         }
     } else if (opcode == "1100011") {
         if (funct3 == "000") {
-            return {"BEQ", imm4_0, src1, src2, imm11_5};
+            return {"BEQ", src1, src2, imm12_10_5_4_1_11};
         } else if (funct3 == "001") {
-            return {"BNE", imm4_0, src1, src2, imm11_5};
+            return {"BNE", src1, src2, imm12_10_5_4_1_11};
         } else if (funct3 == "100") {
-            return {"BLT", imm4_0, src1, src2, imm11_5};
+            return {"BLT", src1, src2, imm12_10_5_4_1_11};
         } else if (funct3 == "101") {
-            return {"BGE", imm4_0, src1, src2, imm11_5};
+            return {"BGE", src1, src2, imm12_10_5_4_1_11};
         } else if (funct3 == "110") {
-            return {"BLTU", imm4_0, src1, src2, imm11_5};
+            return {"BLTU", src1, src2, imm12_10_5_4_1_11};
         } else if (funct3 == "111") {
-            return {"BGEU", imm4_0, src1, src2, imm11_5};
+            return {"BGEU", src1, src2, imm12_10_5_4_1_11};
         }
     } else if (opcode == "0000011") {
         if (funct3 == "000") {
@@ -86,11 +86,11 @@ std::vector<std::string> idecode(const std::string &instruction) {
         }
     } else if (opcode == "0100011") {
         if (funct3 == "000") {
-            return {"SB", imm4_0, src1, src2, imm11_5};
+            return {"SB", src1, src2, imm11_5_4_0};
         } else if (funct3 == "001") {
-            return {"SH", imm4_0, src1, src2, imm11_5};
+            return {"SH", src1, src2, imm11_5_4_0};
         } else if (funct3 == "010") {
-            return {"SW", imm4_0, src1, src2, imm11_5};
+            return {"SW", src1, src2, imm11_5_4_0};
         }
     } else if (opcode == "0010011") {
         if (funct3 == "000") {
@@ -156,7 +156,7 @@ std::vector<std::string> idecode(const std::string &instruction) {
         }
     } else if (opcode == "0001111") {
         if (funct3 == "000") {
-            return {"FENCE", dest, src1, imm11_0};
+            return {"FENCE", dest, src1, succ, pred, fm};
         }
     } else if (opcode == "1110011") {
         if (funct3 == "000") {
