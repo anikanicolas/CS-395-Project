@@ -3,6 +3,8 @@
  */
 #include <string>
 #include <vector>
+//for reverse string
+#include<bits/stdc++.h>
 
 // execute stage [[ unused ]]
 /**
@@ -104,15 +106,14 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded, const
             return {"MEM", dest, std::to_string(stoul(src2) + stoul(src2)), "LHU"};
         } else if (op == "SB") {
           // store 8-bit values from the low bits of register rs2 to memory
-          src2 = "00" + src2
-          return {"MEM", src2, std::to_string(stoul(dest)+stoul(src1)+stoul(src3)), "SB"};
+          reverse(src2.begin(), src2.end())
+          return {"MEM", isubstr(src2, 0, 8), std::to_string(stoul(dest)+stoul(src1)+stoul(src3)), "SB"};
         } else if (op == "SH") {
           // store 16-bit values from the low bits of register rs2 to memory
-          src2 = "0000000000" + src2
-          return {"MEM", src2, std::to_string(stoul(dest)+stoul(src1)+stoul(src3)), "SH"};
+          reverse(src2.begin(), src2.end())
+          return {"MEM", isubstr(src2, 0, 16), std::to_string(stoul(dest)+stoul(src1)+stoul(src3)), "SH"};
         } else if (op == "SW") {
           // store 32-bit values from the low bits of register rs2 to memory
-          src2 = "00000000000000000000000000" + src2
           return {"MEM", src2, std::to_string(stoul(dest)+stoul(src1)+stoul(src3)), "SW"};
         } else if (op == "ADDI") {
         } else if (op == "SLTI") {
