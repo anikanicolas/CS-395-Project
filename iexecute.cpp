@@ -1,74 +1,78 @@
 /**
  * Instruction Execute: execute the instruction or calculate an address
  */
+#include "iexecute.h"
+
 #include <string>
 #include <vector>
 
+#include "utils.h"
+
 // execute stage [[ unused ]]
 /**
- * Execute decoded instruction with fetched registers
+ * Execute decoded instruction with decoded registers
  * @param decoded instruction to execute
  * @return executed instruction
  */
-std::vector<std::string> iexecute(const std::vector<std::string> &decoded, const size_t &pc) {
+std::vector<std::string> iexecute(const std::vector<std::string> &decoded, const uint32_t &pc) {
     if (decoded.empty() || decoded[0].empty()) return {};
     /// execution state to return, FAILURE by default
     std::vector<std::string> ret = {"FAILURE"};
     if (!decoded.empty()) {
         std::string op = decoded[0];
-        std::string dest;
-        std::string src1;
-        std::string src2;
-        std::string src3;
+        std::string arg0;
+        std::string arg1;
+        std::string arg2;
+        std::string arg3;
         if (decoded.size() > 1) {
-            dest = decoded[1];
+            arg0 = decoded[1];
         }
         if (decoded.size() > 2) {
-            src1 = decoded[2];
+            arg1 = decoded[2];
         }
         if (decoded.size() > 3) {
-            src2 = decoded[3];
+            arg2 = decoded[3];
         }
         if (decoded.size() > 4) {
-            src3 = decoded[4];
+            arg3 = decoded[4];
         }
         if (op == "LUI") {
             /*
-             * A LUI instruction can first load src1 with the upper 20 bits of a
+             * A LUI instruction can first load arg1 with the upper 20 bits of a
              * target address LUI (load upper immediate) places the 20-bit
-             * U-immediate into bits 31–12 of register dest and places zero in
+             * U-immediate into bits 31–12 of register arg0 and places zero in
              * the lowest 12 bits.
              */
-            return {"WB", dest, 'b' + src1 + "000000000000"};
+            return {"WB", arg0, arg1 + "000000000000"};
         } else if (op == "AUIPC") {
-            return {"WB", dest, std::to_string(stoul(src1 + "000000000000") + pc)};
+            return {"WB", arg0, xto_string(xstoui(arg1 + "000000000000") + pc)};
         } else if (op == "JAL") {
             /*
             The offset is sign-extended and added to the pc to form the jump
             target address JAL stores the address of the instruction following
             the jump (pc+4) into register rd
             */
-            return {"WB", dest, std::to_string(stoul(src1) + pc)};
+            return {"WB", arg0, xto_string(xstoui(arg1) + pc)};
         } else if (op == "JALR") {
             /*
             The target address is obtained by adding the 12-bit signed
-            I-immediate(src2) to the register rs1(src1), then setting the
+            I-immediate(arg2) to the register rs1(arg1), then setting the
             least-significant bit of the result to zero The address of the
             instruction following the jump (pc+4) is written to register rd
             */
-            std::string rs1 = std::to_string(stoul(src1) + stoul(src2));
+            std::string rs1 = xto_string(xstoui(arg1) + xstoui(arg2));
             size_t lastnum = rs1.length() - 1;
             rs1[lastnum] = 0;
-            return {"WB", dest, "FOO"};
+            return {"WB", arg0, "FOO"};
 
         } else if (op == "BEQ") {
-            if (src1 == src2) {
-                return {"WB", dest, std::to_string(pc + stoul(src3) + stoul(dest))};
+            if (arg0 == arg1) {
+                return {"WB", "pc", xto_string(pc + xstoui(arg2))};
             }
             return {};
         } else if (op == "BNE") {
-            if (src1 != src2) {
-                return {"WB", dest, std::to_string(pc + stoul(src3) + stoul(dest))};
+            if (arg0 != arg1) {
+                return {"WB", "pc", xto_string(pc + xstoui(arg2))};
             }
             return {};
         } else if (op == "BLT") {
@@ -76,24 +80,24 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded, const
         } else if (op == "BGE") {
             // signed version of BGEU
         } else if (op == "BLTU") {
-            if (stoul(src1) < stoul(src2)) {
-                return {"WB", dest, std::to_string(pc + stoul(src3) + stoul(dest))};
+            if (xstoui(arg0) < xstoui(arg1)) {
+                return {"WB", arg0, xto_string(pc + xstoui(arg2))};
             }
             return {};
         } else if (op == "BGEU") {
-            if (stoul(src1) >= stoul(src2)) {
-                return {"WB", dest, std::to_string(pc + stoul(src3) + stoul(dest))};
+            if (xstoui(arg0) >= xstoui(arg1)) {
+                return {"WB", arg0, xto_string(pc + xstoui(arg2))};
             }
             return {};
         } else if (op == "LB") {
-            return {"MEM", dest,};
+            return {"MEM", arg0,};
         } else if (op == "LH") {
             // The LH loads a 16-bit value from memory, then sign-extends to
             // 32-bits before storing in rd
-            return {"MEM", dest,};
+            return {"MEM", arg0,};
         } else if (op == "LW") {
             //  The LW instruction loads a 32-bit value from memory into rd
-            return {"MEM", dest, std::to_string(stoul(src1) + stoul(src2))};
+            return {"MEM", arg0, xto_string(xstoui(arg1) + xstoui(arg2))};
 
         } else if (op == "LBU") {
         } else if (op == "LHU") {
@@ -110,11 +114,11 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded, const
         } else if (op == "SRLI") {
         } else if (op == "SRAI") {
         } else if (op == "ADD") {
-            // ADD performs the addition of src1 and src2
-            return {"WB", dest, std::to_string(stoul(src1) + stoul(src2))};
+            // ADD performs the addition of arg1 and arg2
+            return {"WB", arg0, uxto_string(xstoi(arg1) + xstoi(arg2))};
         } else if (op == "SUB") {
-            // SUB performs the subtraction of src2 from src1
-            return {"WB", dest, std::to_string(stoul(src1) - stoul(src2))};
+            // SUB performs the subtraction of arg2 from arg1
+            return {"WB", arg0, uxto_string(xstoi(arg1) - xstoi(arg2))};
             /*
              * (add upper immediate to pc) is used to build pc-relative
              * addresses and uses the U-type format. AUIPC forms a 32-bit offset
@@ -131,19 +135,19 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded, const
              * if rs2 is not equal to zero, otherwise sets rd to zero (assembler
              * pseudoinstruction SNEZ rd, rs).
              */
-            return {"WB", dest, std::to_string(stol(src1) < stol(src2))};
+            return {"WB", arg0, xto_string(xstoi(arg1) < xstoi(arg2))};
         } else if (op == "SLTU") {
-            return {"WB", dest, std::to_string(stoul(src1) < stoul(src2))};
+            return {"WB", arg0, xto_string(xstoui(arg1) < xstoui(arg2))};
         } else if (op == "XOR") {
-            return {"WB", dest, std::to_string(stoul(src1) ^ stoul(src2))};
+            return {"WB", arg0, xto_string(xstoui(arg1) ^ xstoui(arg2))};
         } else if (op == "SRL") {
-            return {"WB", dest, std::to_string(stoul(src1) >> stoul(src2))};
+            return {"WB", arg0, xto_string(xstoui(arg1) >> xstoui(arg2))};
         } else if (op == "SRA") {
-            return {"WB", dest, std::to_string(stoul(src1) << stoul(src2))};
+            return {"WB", arg0, xto_string(xstoui(arg1) << xstoui(arg2))};
         } else if (op == "OR") {
-            return {"WB", dest, std::to_string(stoul(src1) | stoul(src2))};
+            return {"WB", arg0, xto_string(xstoui(arg1) | xstoui(arg2))};
         } else if (op == "AND") {
-            return {"WB", dest, std::to_string(stoul(src1) & stoul(src2))};
+            return {"WB", arg0, xto_string(xstoui(arg1) & xstoui(arg2))};
         } else if (op == "FENCE") {
             return {"FENCE"};
         } else if (op == "ECALL") {

@@ -1,8 +1,12 @@
 /**
  * Register fetch: read registers
  */
+#include "rfetch.h"
+
 #include <string>
 #include <vector>
+
+#include "utils.h"
 
 /**
  * Get string for integer value at register address
@@ -10,11 +14,11 @@
  * @param regs array of registers
  * @return string representing value of register
  */
-std::string rget(const size_t &addr, const uint32_t regs[]) {
+std::string rget(const size_t &addr, const int32_t regs[]) {
     if (!addr) {
-        return "0";
+        return "00000000000000000000000000000000";
     } else {
-        return std::to_string(regs[addr]);
+        return xto_string(static_cast<uint32_t>(regs[addr]));
     }
 }
 
@@ -24,8 +28,7 @@ std::string rget(const size_t &addr, const uint32_t regs[]) {
  * @param regs array of 32 unsigned 32-bit integer registers
  * @return new copy of decoded instruction with fetched registers
  */
-std::vector<std::string> rfetch(const std::vector<std::string> &decoded,
-                                const uint32_t regs[32]) {
+std::vector<std::string> rfetch(const std::vector<std::string> &decoded, const int32_t regs[32]) {
     if (decoded.empty() || decoded[0].empty()) return {};
     /// return of rfetch is initially decoded input
     std::vector<std::string> ret = decoded;
