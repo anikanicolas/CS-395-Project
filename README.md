@@ -19,5 +19,4 @@ A RISC-V processor simulator that reads and executes binary programs.
 TODO: ALU, ...
 TODO(anikanicolas): add more instructions to input.txt or add input1.txt
 
-To Charlie:
-You can run make and then say ./processor test.txt or another text file to see output
+
