@@ -82,9 +82,9 @@ int main(int argc, char *argv[]) {
     /// program counter holds the address of the current instruction
     uint32_t pc = 0;
     /// array of 32 unsigned 32-bit integer registers (0 is unused)
-    auto *registers = new int32_t[32];
-    for (int32_t i = 0; i < 32; ++i) {
-        registers[i] = -i;
+    auto *registers = new uint32_t[32];
+    for (uint32_t i = 0; i < 32; ++i) {
+        registers[i] = i;
     }
     auto *memory = new std::byte[4096];
     for (size_t i = 0; i < 4096; ++i) {

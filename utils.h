@@ -11,9 +11,11 @@ std::vector<std::string> read(std::istream &input_stream);
 
 std::string vectostr(const std::vector<std::string> &vec);
 
+std::string bytetostring(std::byte byte);
+
 std::string xto_string(uint32_t uint);
 
-std::string uxto_string(int32_t int32);
+std::string sxto_string(int32_t int32);
 
 int32_t xstoi(const std::string &str);
 

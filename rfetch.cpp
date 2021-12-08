@@ -14,11 +14,11 @@
  * @param regs array of registers
  * @return string representing value of register
  */
-std::string rget(const size_t &addr, const int32_t regs[]) {
+std::string rget(const uint32_t &addr, const uint32_t regs[]) {
     if (!addr) {
         return "00000000000000000000000000000000";
     } else {
-        return xto_string(static_cast<uint32_t>(regs[addr]));
+        return xto_string(regs[addr]);
     }
 }
 
@@ -28,7 +28,7 @@ std::string rget(const size_t &addr, const int32_t regs[]) {
  * @param regs array of 32 unsigned 32-bit integer registers
  * @return new copy of decoded instruction with fetched registers
  */
-std::vector<std::string> rfetch(const std::vector<std::string> &decoded, const int32_t regs[32]) {
+std::vector<std::string> rfetch(const std::vector<std::string> &decoded, const uint32_t regs[32]) {
     if (decoded.empty() || decoded[0].empty()) return {};
     /// return of rfetch is initially decoded input
     std::vector<std::string> ret = decoded;
@@ -37,7 +37,7 @@ std::vector<std::string> rfetch(const std::vector<std::string> &decoded, const i
             /// word to check if it is a register address to fetch
             std::string word = decoded[i];
             if (word[0] == 's') {
-                ret[i] = rget(stoul(word.substr(1, word.length() - 1)), regs);
+                ret[i] = rget(xstoui(word.substr(1, word.length() - 1)), regs);
             }
         }
     }

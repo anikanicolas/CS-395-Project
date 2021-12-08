@@ -6,6 +6,7 @@
 #include <bitset>
 #include <iostream>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 /**
@@ -49,6 +50,15 @@ std::string vectostr(const std::vector<std::string> &vec) {
 }
 
 /**
+ * Convert byte to binary string
+ * @param byte to convert
+ * @return binary string
+ */
+std::string bytetostring(std::byte byte) {
+    return std::bitset<8>(static_cast<uint64_t>(byte)).to_string();
+}
+
+/**
  * Convert 32-bit unsigned integer to binary string
  * @param uint unsigned integer to convert
  * @return binary string
@@ -62,7 +72,7 @@ std::string xto_string(uint32_t uint) {
  * @param int32 signed integer to convert
  * @return binary string
  */
-std::string uxto_string(int32_t int32) {
+std::string sxto_string(int32_t int32) {
     return xto_string(static_cast<uint32_t>(int32));
 }
 

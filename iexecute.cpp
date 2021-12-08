@@ -77,8 +77,16 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded, const
             return {};
         } else if (op == "BLT") {
             // signed version of BLTU
+            if (xstoi(arg0) < xstoi(arg1)) {
+                return {"WB", arg0, xto_string(pc + xstoui(arg2))};
+            }
+            return {};
         } else if (op == "BGE") {
             // signed version of BGEU
+            if (xstoi(arg0) >= xstoi(arg1)) {
+                return {"WB", arg0, xto_string(pc + xstoui(arg2))};
+            }
+            return {};
         } else if (op == "BLTU") {
             if (xstoui(arg0) < xstoui(arg1)) {
                 return {"WB", arg0, xto_string(pc + xstoui(arg2))};
@@ -90,20 +98,34 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded, const
             }
             return {};
         } else if (op == "LB") {
-            return {"MEM", arg0,};
+            // loads an 8-bit value from memory, then sign-extends to 32-bits
+            // before storing in rd
+            return {"LB", arg0, xto_string(xstoui(arg1) + xstoui(arg2))};
         } else if (op == "LH") {
             // The LH loads a 16-bit value from memory, then sign-extends to
             // 32-bits before storing in rd
-            return {"MEM", arg0,};
+            return {"LH", arg0, xto_string(xstoui(arg1) + xstoui(arg2))};
         } else if (op == "LW") {
             //  The LW instruction loads a 32-bit value from memory into rd
-            return {"MEM", arg0, xto_string(xstoui(arg1) + xstoui(arg2))};
+            return {"LW", arg0, xto_string(xstoui(arg1) + xstoui(arg2))};
 
         } else if (op == "LBU") {
+            // loads 8-bit values from memory but then zero extends to 32-bits
+            // before storing in rd
+            return {"LBU", arg0, std::to_string(stoul(arg2) + stoul(arg2))};
         } else if (op == "LHU") {
+            // loads a 16-bit value from memory but then zero extends to 32-bits
+            // before storing in rd
+            return {"LHU", arg0, std::to_string(stoul(arg2) + stoul(arg2))};
         } else if (op == "SB") {
+            // store 8-bit values from the low bits of register rs2 to memory
+            return {"SB", arg1.substr(24, 8), std::to_string(stoul(arg0) + stoul(arg2))};
         } else if (op == "SH") {
+            // store 16-bit values from the low bits of register rs2 to memory
+            return {"SH", arg2.substr(16, 16), std::to_string(stoul(arg0) + stoul(arg2))};
         } else if (op == "SW") {
+            // store 32-bit values from the low bits of register rs2 to memory
+            return {"SW", arg2, std::to_string(stoul(arg0) + stoul(arg2))};
         } else if (op == "ADDI") {
         } else if (op == "SLTI") {
         } else if (op == "SLTIU") {
@@ -115,10 +137,10 @@ std::vector<std::string> iexecute(const std::vector<std::string> &decoded, const
         } else if (op == "SRAI") {
         } else if (op == "ADD") {
             // ADD performs the addition of arg1 and arg2
-            return {"WB", arg0, uxto_string(xstoi(arg1) + xstoi(arg2))};
+            return {"WB", arg0, sxto_string(xstoi(arg1) + xstoi(arg2))};
         } else if (op == "SUB") {
             // SUB performs the subtraction of arg2 from arg1
-            return {"WB", arg0, uxto_string(xstoi(arg1) - xstoi(arg2))};
+            return {"WB", arg0, sxto_string(xstoi(arg1) - xstoi(arg2))};
             /*
              * (add upper immediate to pc) is used to build pc-relative
              * addresses and uses the U-type format. AUIPC forms a 32-bit offset
