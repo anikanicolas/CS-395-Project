@@ -54,8 +54,6 @@ rfetch(const std::vector<std::string> &decoded, const uint32_t regs[32], bool go
               if (dest_word[0] == 'd') {
               auto temp_address = stoul(dest_word.substr(1, dest_word.length() - 1));
                 good_register[temp_address] = false;
-                if (!good_register[temp_address]) {
-                }
               }
             }
         }
