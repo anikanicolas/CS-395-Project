@@ -17,7 +17,7 @@
  * @param regs array of registers
  * @return string representing value of register
  */
-std::string rget(const size_t &addr, const uint32_t regs[], bool good_register[32]) {
+std::string rget(const size_t &addr, const uint32_t regs[], const bool good_register[32]) {
     if (!addr) {
         return "00000000000000000000000000000000";
     } else {
@@ -50,18 +50,18 @@ rfetch(const std::vector<std::string> &decoded, const uint32_t regs[32], bool go
             }
             // if a load, then the register should not be available
             if (word[0] == 'L') {
-              std::string dest_word = decoded[i+1];
-              if (dest_word[0] == 'd') {
-              auto temp_address = stoul(dest_word.substr(1, dest_word.length() - 1));
-                good_register[temp_address] = false;
-              }
+                std::string dest_word = decoded[i + 1];
+                if (dest_word[0] == 'd') {
+                    auto temp_address = stoul(dest_word.substr(1, dest_word.length() - 1));
+                    good_register[temp_address] = false;
+                }
             }
         }
     }
     for (size_t i = 1; i < ret.size(); i++) {
-      if (ret[i] == "invalid") {
-        ret = {"STALL"};
-      }
+        if (ret[i] == "invalid") {
+            ret = {"STALL"};
+        }
     }
     return ret;
 }
