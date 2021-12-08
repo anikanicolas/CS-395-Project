@@ -16,16 +16,16 @@
  * @param regs array of registers
  * @return string representing value of register
  */
-std::string rget(const size_t &addr, const uint32_t regs[], const std::std::vector<bool> &good_register) {
+std::string rget(const size_t &addr, const uint32_t regs[], const bool good_register[32]) {
     if (!addr) {
         return "00000000000000000000000000000000";
     } else {
-      // stalling: check if the register is currently being written to
-      if (good_register[addr] == false) {
-        return xto_string(regs[addr]);
-      } else {
-        //return zero?
-      }
+        // stalling: check if the register is currently being written to
+        if (!good_register[addr]) {
+            return xto_string(regs[addr]);
+        } else {
+            //return zero?
+        }
     }
 }
 
@@ -35,7 +35,8 @@ std::string rget(const size_t &addr, const uint32_t regs[], const std::std::vect
  * @param regs array of 32 unsigned 32-bit integer registers
  * @return new copy of decoded instruction with fetched registers
  */
-std::vector<std::string> rfetch(const std::vector<std::string> &decoded, const uint32_t regs[32], const std::vector<bool> &good_register) {
+std::vector<std::string>
+rfetch(const std::vector<std::string> &decoded, const uint32_t regs[32], const bool good_register[32]) {
     if (decoded.empty() || decoded[0].empty()) return {};
     /// return of rfetch is initially decoded input
     std::vector<std::string> ret = decoded;
@@ -44,7 +45,7 @@ std::vector<std::string> rfetch(const std::vector<std::string> &decoded, const u
             /// word to check if it is a register address to fetch
             std::string word = decoded[i];
             if (word[0] == 's') {
-              //return like zero??
+                //return like zero??
                 ret[i] = rget(stoul(word.substr(1, word.length() - 1)), regs, good_register);
             }
         }

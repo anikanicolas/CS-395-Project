@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
         registers[i] = i;
     }
     // array of booleans for each register to check if it's being written to or not
-    std::vector<bool> good_register;
+    auto good_register = new bool[32];
     for (int i = 0; i < 32; i++) {
       good_register[i] = false;
     }
